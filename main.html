@@ -11,7 +11,7 @@
 <body>
     <header>
         <div class="title">SimplTimer</div>
-        <div class="themeToggleWrapper">
+        <div class="themeToggleWrapper" onclick="toggleTheme()">
             <i class="fa-solid fa-moon"></i>
             <i class="fa-solid fa-sun"></i>
             <div class="themeToggleCircle">
@@ -24,28 +24,30 @@
             <div class="contentCards">
                 <div class="contentCard">
                     <div class="cardHead"></div>
-                    <div class="cardBody"></div>
+                    <div class="cardBody">
+                        #
+                    </div>
                 </div>
                 <div class="contentCard">
                     <div class="cardHead"></div>
-                    <div class="cardBody"></div>
+                    <div class="cardBody">$</div>
                 </div>
                 <div class="contentCard">
                     <div class="cardHead"></div>
-                    <div class="cardBody"></div>
+                    <div class="cardBody">@</div>
                 </div>
             </div>
         </div>
         <div class="menuWrapper">
-            <div class="menuItem activeMenu" id="world-clock">
+            <div class="menuItem activeMenu" id="world-clock" onclick="moveCards(0)">
                 <i class="fa-solid fa-globe"></i>
                 <div>World clock</div>
             </div>
-            <div class="menuItem" id="timer">
+            <div class="menuItem" id="timer" onclick="moveCards(1)">
                 <i class="fa-solid fa-hourglass-half"></i>
                 <div>Timer</div>
             </div>
-            <div class="menuItem" id="stopwatch">
+            <div class="menuItem" id="stopwatch" onclick="moveCards(2)">
                 <i class="fa-solid fa-stopwatch"></i>
                 <div>Stopwatch</div>
             </div>
