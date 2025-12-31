@@ -22,24 +22,45 @@
     <main>
         <div class="cardContentWrapper">
             <div class="contentCards">
-                <div class="contentCard">
-                    <div class="cardHead"></div>
+                <div class="contentCard" id="worldClockCard">
+                    <div class="cardHead">
+                        <div class="timeZimeDropDown">
+                            <div class="timezoneValue">Time zone</div>
+                            <div class="dropDownBtn">
+                                <i class="fa-solid fa-caret-up"></i>
+                                <i class="fa-solid fa-caret-down"></i>
+                            </div>
+                        </div>
+                        <div class="hourFormatToggle" onclick="toggleFormat()">
+                            <div class="format12">12H</div>
+                            <div class="format24">24H</div>
+                            <div class="hourToggleCircle">
+                                12H
+                            </div>
+                        </div>
+                    </div>
                     <div class="cardBody">
-                        #
+                        <div class="worldTimeWrapper">
+                            <div class="timeHours">00</div>
+                            <div class="timeSeparator">:</div>
+                            <div class="timeMinutes">00</div>
+                            <div class="timeSeconds">00</div>
+                            <div class="timePeriod">AM</div>
+                        </div>
                     </div>
                 </div>
-                <div class="contentCard">
+                <div class="contentCard" id="timerCard">
                     <div class="cardHead"></div>
                     <div class="cardBody">$</div>
                 </div>
-                <div class="contentCard">
+                <div class="contentCard" id="stopwatchCard">
                     <div class="cardHead"></div>
                     <div class="cardBody">@</div>
                 </div>
             </div>
         </div>
         <div class="menuWrapper">
-            <div class="menuItem activeMenu" id="world-clock" onclick="moveCards(0)">
+            <div class="menuItem activeMenu" id="worldClock" onclick="moveCards(0)">
                 <i class="fa-solid fa-globe"></i>
                 <div>World clock</div>
             </div>
