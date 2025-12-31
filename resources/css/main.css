@@ -80,6 +80,8 @@ main {
     height: 100%;
     display: flex;
     flex-direction: row;
+    /* To do: remove  later */
+    transform: translateX(-690px);
     transition: transform 0.3s ease;
 }
 
@@ -168,7 +170,7 @@ main {
     align-items: center;
 }
 
-.worldTimeWrapper {
+.worldTimeWrapper, .stopwatchWrapper {
     width:100%;
     height: 100%;
     display:flex;
@@ -214,6 +216,164 @@ main {
     align-items: center;
     font-size:15px;
     opacity: 0.7;
+}
+
+.customTimersWrappers {
+    width:100%;
+    height: 100%;
+    display:flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    gap:5px;
+    font-weight: bold;
+}
+
+.customTimer {
+    width: 65px;
+    height: 25px;
+    background-color: #0078DB;
+    border-radius: 15px;
+    color: #ffffff;
+    
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size:0.7em;
+    font-weight:100;
+}
+
+.empty {
+    width: 55px;
+    height: 20px;
+    background-color: #a7a7a7;
+    opacity: 0.5;
+    cursor: not-allowed;
+    border: dashed 2px #7a7a7a;
+}
+
+#timerCard .cardBody, #stopwatchCard .cardBody {
+    width: 100%;
+    height: 100%;
+    display:grid;
+    grid-template-columns: 85% 15%;
+}
+
+.timerWrapper {
+    width: 100%;
+    height: 100%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.timerHours, .timerMinutes, .timerSeconds {
+    width: 75px;
+    height:100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; 
+}
+
+.timerHours .value, .timerMinutes .value, .timerSeconds .value {
+    height: 50%;
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+}
+
+.timerHours .value .digits, .timerMinutes .value .digits {
+    font-size:45px;
+}
+
+.timerSeconds .value .digits {
+    font-size:30px;
+}
+
+.timerHours .value .label, .timerMinutes .value .label, .timerSeconds .value .label {
+    font-size:12px;
+    opacity: 0.7;
+}
+
+.increment, .decrement {
+    width: 100%;
+    height: 15%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    opacity: 0.9;
+    font-size: 0.6em;
+}
+
+.increment {
+    border-bottom: 0.5px solid #a7a7a7;
+}
+
+.decrement {
+    border-top: 0.5px solid #a7a7a7;
+}
+
+
+.timerSeparator {
+    width: 15px;
+    height:100%;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    font-size:35px;
+    opacity: 0.8;
+}
+
+.timerSideButtons, .stopwatchSideButtons {
+    width: 100%;
+    height: 100%;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+}
+
+.stopwatchSideButtons {
+    justify-content: start;
+    gap:15px;
+}
+
+.resetButton, .playButton, .addButton {
+    width: 30px;
+    height: 30px;
+    background-color: #2b2b2b;
+    border-radius: 50%;
+    color: #d9d9d9;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.addButton {
+    width: 30px;
+    height: 30px;
+    background-color: #0078DB;
+}
+
+.playButton {
+    font-size: 1.2em;
+    width: 40px;
+    height: 40px;
+    background-color: #00311F;
+}
+
+.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .menuWrapper {

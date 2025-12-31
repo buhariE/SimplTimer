@@ -50,17 +50,93 @@
                     </div>
                 </div>
                 <div class="contentCard" id="timerCard">
-                    <div class="cardHead"></div>
-                    <div class="cardBody">$</div>
+                    <div class="cardHead">
+                        <div class="customTimersWrappers">
+                            <div class="customTimer empty"></div>
+                            <div class="customTimer empty"></div>
+                            <div class="customTimer empty"></div>
+                            <div class="customTimer empty"></div>
+                            <div class="customTimer empty"></div>
+                        </div>
+                    </div>
+                    <div class="cardBody">
+                        <div class="timerWrapper">
+                            <div class="timerHours">
+                                <div class="increment">
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                </div>
+
+                                <div class="value">
+                                    <span class="digits">00</span>
+                                    <span class="label">H</span> 
+                                </div>
+                                <div class="decrement">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="timerSeparator">:</div>
+                            <div class="timerMinutes">
+                                <div class="increment">
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                </div>
+                                <div class="value">
+                                    <span class="digits">00</span>
+                                    <span class="label">M</span> 
+                                </div>
+                                <div class="decrement">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            <div class="timerSeconds">
+                                <div class="increment">
+                                    <i class="fa-solid fa-chevron-up"></i>
+                                </div>
+                                <div class="value">
+                                    <span class="digits">00</span>
+                                    <span class="label">S</span> 
+                                </div>
+                                <div class="decrement">
+                                    <i class="fa-solid fa-chevron-down"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timerSideButtons">
+                            <div class="resetButton disabled">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </div>
+                            <div class="playButton disabled">
+                                <i class="fa-solid fa-play"></i>
+                            </div>
+                            <div class="addButton disabled">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="contentCard" id="stopwatchCard">
                     <div class="cardHead"></div>
-                    <div class="cardBody">@</div>
+                    <div class="cardBody">
+                        <div class="stopwatchWrapper">
+                            <div class="timeHours">00</div>
+                            <div class="timeSeparator">:</div>
+                            <div class="timeMinutes">00</div>
+                            <div class="timeSeconds">00</div>
+                        </div>
+                        <div class="stopwatchSideButtons">
+                            <div class="resetButton disabled">
+                                <i class="fa-solid fa-rotate-right"></i>
+                            </div>
+                            <div class="playButton">
+                                <i class="fa-solid fa-play"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="menuWrapper">
-            <div class="menuItem activeMenu" id="worldClock" onclick="moveCards(0)">
+            <!-- To do: move activemenu back to here -->
+            <div class="menuItem" id="worldClock" onclick="moveCards(0)">
                 <i class="fa-solid fa-globe"></i>
                 <div>World clock</div>
             </div>
@@ -68,7 +144,7 @@
                 <i class="fa-solid fa-hourglass-half"></i>
                 <div>Timer</div>
             </div>
-            <div class="menuItem" id="stopwatch" onclick="moveCards(2)">
+            <div class="menuItem activeMenu" id="stopwatch" onclick="moveCards(2)">
                 <i class="fa-solid fa-stopwatch"></i>
                 <div>Stopwatch</div>
             </div>
