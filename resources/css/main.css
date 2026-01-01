@@ -67,12 +67,131 @@ main {
     width: 100%;
     height: 100%;
 
+    position:relative;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 20px;
 
+}
+
+.timezoneBackDrop {
+    width:100%;
+    height: 100%;
+    position: absolute;
+    top:0;
+    left:0;
+    background-color: #ffffff13;
+    backdrop-filter: blur(8px);
+    display:none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.timezoneDropDownContent {
+    width: 278px;
+    height: 328px;
+    background-color: #d9d9d9;
+    border-radius: 15px;
+    overflow: hidden;
+    border: solid 1px #fff;
+    box-shadow: 0 0 10px #00000088;
+    color:#2d2d2d;
+    padding:10px;
+
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.tzDDCheader {
+    width: 100%;
+    height: 10%;
+    font-size:0.8em;
+    font-weight: bold;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.headertext {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.closeBtn {
+    cursor: pointer;
+    font-size: 1.2em;
+    width:30px;
+    height:100%;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tzDDCSearch {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.searchWrapper {
+    width: 70%;
+    height: 100%;
+    background-color: #ffffff;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 5px;
+}
+
+.searchWrapper input {
+    width: 100%;
+    height: 70%;
+    border: none;
+    outline: none;
+    font-size: 0.7em;
+    border-radius: 10px;
+}
+
+.searchWrapper i {
+    font-size: 0.8em;
+    color: #7a7a7a;
+}
+
+.tzDDCList {
+    width: 100%;
+    height: 80%;
+    margin-top: 10px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.tzDDCListItem {
+    width: calc(100% - 20px);
+    height: 50px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    font-size: 0.75em;
+}
+
+.loadingItem {
+    opacity: 0.5;
+    cursor: not-allowed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .cardContentWrapper {
@@ -87,8 +206,6 @@ main {
     height: 100%;
     display: flex;
     flex-direction: row;
-    /* To do: remove  later */
-    transform: translateX(-690px);
     transition: transform 0.3s ease;
 }
 
@@ -116,7 +233,7 @@ main {
 }
 
 
-.timeZimeDropDown {
+.timeZoneDropDown {
     width: 120px;
     height: 100%;
     background-color: #ffffff;
@@ -303,6 +420,7 @@ main {
 
 .timerSeconds .value .digits {
     font-size:30px;
+    font-family: 'Digital-7', monospace;
 }
 
 .timerHours .value .label, .timerMinutes .value .label, .timerSeconds .value .label {

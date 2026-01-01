@@ -24,7 +24,7 @@
             <div class="contentCards">
                 <div class="contentCard" id="worldClockCard">
                     <div class="cardHead">
-                        <div class="timeZimeDropDown">
+                        <div class="timeZoneDropDown" onclick="openBackDrop()">
                             <div class="timezoneValue">Time zone</div>
                             <div class="dropDownBtn">
                                 <i class="fa-solid fa-caret-up"></i>
@@ -136,7 +136,7 @@
         </div>
         <div class="menuWrapper">
             <!-- To do: move activemenu back to here -->
-            <div class="menuItem" id="worldClock" onclick="moveCards(0)">
+            <div class="menuItem activeMenu" id="worldClock" onclick="moveCards(0)">
                 <i class="fa-solid fa-globe"></i>
                 <div>World clock</div>
             </div>
@@ -144,9 +144,36 @@
                 <i class="fa-solid fa-hourglass-half"></i>
                 <div>Timer</div>
             </div>
-            <div class="menuItem activeMenu" id="stopwatch" onclick="moveCards(2)">
+            <div class="menuItem" id="stopwatch" onclick="moveCards(2)">
                 <i class="fa-solid fa-stopwatch"></i>
                 <div>Stopwatch</div>
+            </div>
+        </div>
+        <div class="timezoneBackDrop" onclick="closeBackDropOnClickOutside(event)">
+            <div class="timezoneDropDownContent">
+                <div class="tzDDCheader">
+                    <div class="headertext">
+                        Choose a time zone
+                    </div>
+                    <div class="closeBtn" onclick="closeBackDrop()">
+                        <i class="fa-solid fa-xmark"></i>
+                    </div>
+                </div>
+                <div class="tzDDCSearch">
+                    <div class="searchWrapper">
+                        <input type="search" name="" id="" placeholder="Search by city/state/province">
+                        <i class="fa-solid fa-search"></i>
+                    </div>
+                </div>
+                <div class="tzDDCList">
+                    <div class="tzDDCListItem loadingItem">Loading...</div>
+                    <div class="tzDDCListItem loadingItem">Loading...</div>
+                    <div class="tzDDCListItem loadingItem">Loading...</div>
+                    <div class="tzDDCListItem loadingItem">Loading...</div>
+                    <div class="tzDDCListItem loadingItem">Loading...</div>
+                    
+                    <!-- Time zone list items will be populated here dynamically -->
+                </div>
             </div>
         </div>
     </main>

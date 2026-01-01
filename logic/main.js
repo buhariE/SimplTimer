@@ -3,6 +3,9 @@ const themeToggleWrapper = document.querySelector('.themeToggleWrapper');
 const themeToggleCircle = document.querySelector('.themeToggleCircle');
 const hourToggleCircle = document.querySelector('.hourToggleCircle');
 const contentCardsContainer = document.querySelector('.contentCards');
+const timezoneDropDopdownBtn = document.querySelector('.timeZoneDropDown');
+const timezoneDropDopdownContent = document.querySelector('.timezoneBackDrop');
+const timezoneDropDopdownClose = document.querySelector('.closeBtn');
 let theme = 'dark';
 let hourFormat = '12H';
 const translateXvalue = 345;
@@ -45,4 +48,21 @@ function moveCards(index){
             item.classList.remove('activeMenu');
         }
     });
+}
+
+function closeBackDrop(){
+    timezoneDropDopdownContent.style.display = 'none';
+}
+
+function closeBackDropOnClickOutside(e){
+    const child = timezoneDropDopdownContent.children[0];
+    if(e.clientX >= child.offsetLeft && e.clientX <= (child.offsetLeft + child.offsetWidth) &&
+       e.clientY >= child.offsetTop && e.clientY <= (child.offsetTop + child.offsetHeight)){
+        return;
+    }
+    closeBackDrop();
+}
+
+function openBackDrop(){
+    timezoneDropDopdownContent.style.display = 'flex';
 }
