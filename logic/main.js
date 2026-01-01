@@ -20,10 +20,20 @@ function toggleTheme() {
         theme = 'light';
         themeToggleCircle.style.transform = 'translateX(24px)';
         themeToggleCircle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        document.documentElement.style.setProperty('--primary-color', '#f0f0f0');
+        document.documentElement.style.setProperty('--secondary-color', '#4a4a4a');
+        document.documentElement.style.setProperty('--text-color', '#323232ff');
+        document.documentElement.style.setProperty('--accent-color1', '#2a8ad8ff');
+        document.documentElement.style.setProperty('--accent-color2', '#064d33ff');
     } else {
         theme = 'dark';
         themeToggleCircle.style.transform = 'translateX(0px)';
         themeToggleCircle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+        document.documentElement.style.setProperty('--primary-color', '#2b2b2b');
+        document.documentElement.style.setProperty('--secondary-color', '#d9d9d9');
+        document.documentElement.style.setProperty('--text-color', '#ffffff');
+        document.documentElement.style.setProperty('--accent-color1', '#0078DBff');
+        document.documentElement.style.setProperty('--accent-color2', '#00311Fff');
     }
 }
 function toggleFormat() {

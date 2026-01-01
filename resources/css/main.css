@@ -5,37 +5,50 @@
     font-style: normal;
 }
 
+:root {
+    --primary-color: #2d2d2d;
+    --secondary-color: #d9d9d9;
+    --text-color: #ffffff;
+    --accent-color1: #0078DB;
+    --accent-color2: #00311F;
+}
+
 body {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background-color: #2d2d2d;
-    color: #f0f0f0;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
     position:relative;
 
     width: 100vw;
     height: 100vh;
+
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 header {
     width: calc(100% - 20px);
     height: fit-content;
     padding: 5px 10px;
+    
     position: absolute;
     top:30px;
     left:0;
+    
     display: flex;
     justify-content: space-between;
+
     z-index: 5;
-
-
 }
 
 .themeToggleWrapper, .hourFormatToggle {
     width: 50px;
     height: 25px;
-    background-color: #d9d9d9;
+
+    background-color: var(--secondary-color);
     border-radius: 15px;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -44,13 +57,13 @@ header {
     position: relative;
 }
 .themeToggleWrapper i {
-    color: #2b2b2b;
+    color: var(--primary-color);
     margin: 0 5px;
 }
 .themeToggleCircle, .hourToggleCircle {
     height: 21px;
     width: 21px;
-    background-color: #2d2d2d;
+    background-color: var(--primary-color);
     border-radius: 50%;
     position: absolute;
     top: 2px;
@@ -59,7 +72,7 @@ header {
 }
 
 .themeToggleCircle i {
-    color: #d9d9d9;
+    color: var(--secondary-color);
     font-size: 0.75em;
 }
 
@@ -95,12 +108,12 @@ main {
 .timezoneDropDownContent {
     width: 278px;
     height: 328px;
-    background-color: #d9d9d9;
+    background-color: var(--secondary-color);
     border-radius: 15px;
     overflow: hidden;
     border: solid 1px #fff;
     box-shadow: 0 0 10px #00000088;
-    color:#2d2d2d;
+    color: var(--primary-color);
     padding:10px;
 
     display: flex;
@@ -177,7 +190,7 @@ main {
 .tzDDCListItem {
     width: calc(100% - 20px);
     height: 50px;
-    background-color: #ffffff;
+    background-color: var(--text-color);
     border-radius: 5px;
     display: flex;
     align-items: center;
@@ -198,7 +211,7 @@ main {
 .cardContentWrapper {
     width: 345px;
     height: 185px;
-    background-color: #d9d9d9;
+    background-color: var(--secondary-color);
     border-radius: 15px;
     overflow: hidden;
 }
@@ -214,8 +227,8 @@ main {
     width: calc(345px - 20px);
     height: calc(185px - 20px);
     border-radius: 15px;
-    background-color: #d9d9d9;
-    color:#2b2b2b;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
     display: grid;
     grid-template-rows: 25px auto;
     padding:10px;
@@ -237,7 +250,8 @@ main {
 .timeZoneDropDown {
     width: 120px;
     height: 100%;
-    background-color: #ffffff;
+    background-color: var(--text-color);
+    color: var(--primary-color);
     border-radius: 20px;
     
     display: flex;
@@ -263,7 +277,7 @@ main {
 .hourFormatToggle {
     width: 50px;
     height:  100%;
-    background-color: #ffffff;
+    background-color: var(--text-color);
     border-radius: 15px;
     display: flex;
     justify-content: space-around;
@@ -283,7 +297,7 @@ main {
     justify-content: center;
     font-size: 0.85em;
     font-weight: bold;
-    color: white;
+    color: var(--text-color);
 }
 
 .cardBody {
@@ -490,14 +504,14 @@ main {
 .addButton {
     width: 30px;
     height: 30px;
-    background-color: #0078DB;
+    background-color: var(--accent-color1);
 }
 
 .playButton {
     font-size: 1.2em;
     width: 40px;
     height: 40px;
-    background-color: #00311F;
+    background-color: var(--accent-color2);
 }
 
 .disabled {
@@ -508,7 +522,7 @@ main {
 .menuWrapper {
     width: 345px;
     height: 70px;
-    background-color: #d9d9d9;
+    background-color: var(--secondary-color);
     border-radius: 15px;
 
     display: flex;
@@ -517,7 +531,7 @@ main {
 }
 
 .menuItem {
-    color: #2b2b2b;
+    color: var(--primary-color);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -527,11 +541,12 @@ main {
 }
 .menuItem:hover {
     cursor: pointer;
-    color: #000000;
+    color: var(--primary-color);
+    opacity: 0.8;
 }
 .activeMenu {
     opacity: 1;
-    color: #000000;
+    color: var(--primary-color);
 }
 .menuItem div {
     font-size: 0.75em;
