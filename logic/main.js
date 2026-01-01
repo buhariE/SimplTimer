@@ -2,17 +2,24 @@
 const themeToggleWrapper = document.querySelector('.themeToggleWrapper');
 const themeToggleCircle = document.querySelector('.themeToggleCircle');
 const hourToggleCircle = document.querySelector('.hourToggleCircle');
+
 const contentCardsContainer = document.querySelector('.contentCards');
+
 const timezoneDropDopdownBtn = document.querySelector('.timeZoneDropDown');
 const timezoneDropDopdownContent = document.querySelector('.timezoneBackDrop');
 const timezoneDropDopdownClose = document.querySelector('.closeBtn');
+const menuItems = document.querySelectorAll('.menuItem');
+
+const timerSideButtons = document.querySelectorAll('.timerSideButtons div');
+
+
+// init global variables
 let theme = 'dark';
 let hourFormat = '12H';
 const translateXvalue = 345;
 let contentCardMovement = 0;
 let max = 0;
 let min = -(2*translateXvalue);
-const menuItems = document.querySelectorAll('.menuItem');
 
 // functions
 function toggleTheme() {
@@ -75,4 +82,108 @@ function closeBackDropOnClickOutside(e){
 
 function openBackDrop(){
     timezoneDropDopdownContent.style.display = 'flex';
+}
+
+function displayTime(){
+    
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let seconds = now.getSeconds();
+    let ampm = '';
+    if(hourFormat === '12H'){
+        ampm = hours >= 12 ? ' PM' : ' AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+    } else {
+        ampm = 'HRS';
+    }
+
+    hours = hours < 10 ? '0' + hours : hours;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    
+    const hoursDiv = document.querySelector('.timeHours');
+    hoursDiv.innerText = hours;
+    const minutesDiv = document.querySelector('.timeMinutes');
+    minutesDiv.innerText = minutes;
+    const secondsDiv = document.querySelector('.timeSeconds');
+    secondsDiv.innerText = seconds;
+    const ampmDiv = document.querySelector('.timePeriod');
+    ampmDiv.innerText = ampm;
+
+    setTimeout(displayTime, 1000);
+}
+
+displayTime();
+
+function incrementTime(type){
+    switch(type){
+        case 'hours':
+            incrementTimeDisplay(0,23,document.querySelector('.timerHours .value .digits'));
+            break;
+        case 'minutes':
+            incrementTimeDisplay(0,59,document.querySelector('.timerMinutes .value .digits'));
+            break;
+        case 'seconds':
+            incrementTimeDisplay(0,59,document.querySelector('.timerSeconds .value .digits'));
+            break;
+    }
+    enableTimerPlaySideButtons();
+}
+function decrementTime(type){
+    switch(type){
+        case 'hours':
+            decrementTimeDisplay(0,23,document.querySelector('.timerHours .value .digits'));
+            break;
+        case 'minutes':
+            decrementTimeDisplay(0,59,document.querySelector('.timerMinutes .value .digits'));
+            break;
+        case 'seconds':
+            decrementTimeDisplay(0,59,document.querySelector('.timerSeconds .value .digits'));
+            break;
+    }
+    enableTimerPlaySideButtons();
+}
+
+function incrementTimeDisplay(min,max,element){
+    let value = parseInt(element.innerText);
+    if(value < max){
+        value += 1;
+    } else {
+        value = max;
+    }
+    element.innerText = value < 10 ? '0' + value : value;
+}
+
+function decrementTimeDisplay(min,max,element,update){
+    let value = parseInt(element.innerText);
+    if(value > min){
+        value -= 1;
+    } else {
+        value = min;
+    }
+    element.innerText = value < 10 ? '0' + value : value;
+}
+
+function enableTimerPlaySideButtons(){
+
+    
+    const timerHours = parseInt(document.querySelector('.timerHours .value .digits').innerText);
+    const timerMinutes = parseInt(document.querySelector('.timerMinutes .value .digits').innerText);
+    const timerSeconds = parseInt(document.querySelector('.timerSeconds .value .digits').innerText);
+    if(timerHours > 0 || timerMinutes > 0 || timerSeconds >= 10){
+        
+        timerSideButtons[1].classList.remove('disabled');
+        timerSideButtons[1].removeAttribute('aria-disabled');
+        timerSideButtons[2].classList.remove('disabled');
+        timerSideButtons[2].removeAttribute('aria-disabled');
+
+    } else {
+        timerSideButtons.forEach(button => {
+            button.classList.add('disabled');
+            button.setAttribute('aria-disabled', 'true');
+        });
+    }
+
 }

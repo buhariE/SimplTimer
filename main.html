@@ -22,7 +22,7 @@
     <main>
         <div class="cardContentWrapper">
             <div class="contentCards">
-                <div class="contentCard" id="worldClockCard">
+                <div class="contentCard" id="worldClockCard" onload="displayTime()">
                     <div class="cardHead">
                         <div class="timeZoneDropDown" onclick="openBackDrop()">
                             <div class="timezoneValue">Time zone</div>
@@ -62,7 +62,7 @@
                     <div class="cardBody">
                         <div class="timerWrapper">
                             <div class="timerHours">
-                                <div class="increment">
+                                <div class="increment" onclick="incrementTime('hours')">
                                     <i class="fa-solid fa-chevron-up"></i>
                                 </div>
 
@@ -70,44 +70,44 @@
                                     <span class="digits">00</span>
                                     <span class="label">H</span> 
                                 </div>
-                                <div class="decrement">
+                                <div class="decrement" onclick="decrementTime('hours')">
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </div>
                             </div>
                             <div class="timerSeparator">:</div>
                             <div class="timerMinutes">
-                                <div class="increment">
+                                <div class="increment" onclick="incrementTime('minutes')">
                                     <i class="fa-solid fa-chevron-up"></i>
                                 </div>
                                 <div class="value">
                                     <span class="digits">00</span>
                                     <span class="label">M</span> 
                                 </div>
-                                <div class="decrement">
+                                <div class="decrement" onclick="decrementTime('minutes')">
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </div>
                             </div>
                             <div class="timerSeconds">
-                                <div class="increment">
+                                <div class="increment" onclick="incrementTime('seconds')">
                                     <i class="fa-solid fa-chevron-up"></i>
                                 </div>
                                 <div class="value">
                                     <span class="digits">00</span>
                                     <span class="label">S</span> 
                                 </div>
-                                <div class="decrement">
+                                <div class="decrement" onclick="decrementTime('seconds')">
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </div>
                             </div>
                         </div>
                         <div class="timerSideButtons">
-                            <div class="resetButton disabled">
+                            <div class="resetButton disabled" aria-disabled="true">
                                 <i class="fa-solid fa-rotate-right"></i>
                             </div>
-                            <div class="playButton disabled">
+                            <div class="playButton disabled" aria-disabled="true">
                                 <i class="fa-solid fa-play"></i>
                             </div>
-                            <div class="addButton disabled">
+                            <div class="addButton disabled" aria-disabled="true">
                                 <i class="fa-solid fa-plus"></i>
                             </div>
                         </div>
