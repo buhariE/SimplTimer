@@ -514,6 +514,10 @@ main {
     background-color: var(--accent-color2);
 }
 
+.stop {
+    background-color: red;
+}
+
 .disabled {
     opacity: 0.5;
     cursor: not-allowed;
