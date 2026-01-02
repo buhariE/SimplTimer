@@ -167,7 +167,7 @@ function decrementTimeDisplay(min,max,element,update){
 }
 
 function enableTimerPlaySideButtons(){
-    
+
     const timerHours = parseInt(document.querySelector('.timerHours .value .digits').innerText);
     const timerMinutes = parseInt(document.querySelector('.timerMinutes .value .digits').innerText);
     const timerSeconds = parseInt(document.querySelector('.timerSeconds .value .digits').innerText);
@@ -180,34 +180,47 @@ function enableTimerPlaySideButtons(){
         timerSideButtons[2].removeAttribute('aria-disabled');
 
     } else {
+
         timerSideButtons.forEach(button => {
             button.classList.add('disabled');
             button.setAttribute('aria-disabled', 'true');
             button.removeEventListener('click',countDown);
         });
+        
     }
 
 }
 
-let intervalId;
+let intervalIdCtDwn;
 function countDown(){
+
     const timerHoursDigits = document.querySelector('.timerHours .value .digits');
     const timerMinutesDigits = document.querySelector('.timerMinutes .value .digits');
     const timerSecondsDigits = document.querySelector('.timerSeconds .value .digits');
 
-    // countDownTime(0,timerHoursDigits,0);
-    // countDownTime(0,timerMinutesDigits,59);
-    // countDownTime(0,timerSecondsDigits,59);
+    
     if (timerSideButtons[1].classList.contains('stop')){
+
+        
         timerSideButtons[1].classList.remove('stop');
         timerSideButtons[1].innerHTML = '<i class="fa-solid fa-play"></i>';
-        clearInterval(intervalId);
+        
+        enableTimerPlaySideButtons();
+        
+        clearInterval(intervalIdCtDwn);
+
     } else {
+
         timerSideButtons[1].classList.add('stop');
         timerSideButtons[1].innerHTML = '<i class="fa-solid fa-stop"></i>';
-        intervalId = setInterval(countDownTime, 1000, 0, timerSecondsDigits, 59, timerMinutesDigits, timerHoursDigits,intervalId,function(){
+
+        timerSideButtons[2].classList.add('disabled');
+        timerSideButtons[2].setAttribute('aria-disabled','true');
+
+        intervalIdCtDwn = setInterval(countDownTime, 1000, 0, timerSecondsDigits, 59, timerMinutesDigits, timerHoursDigits,intervalIdCtDwn,function(){
             timerSideButtons[1].classList.remove('stop');
             timerSideButtons[1].innerHTML = '<i class="fa-solid fa-play"></i>';
+
             enableTimerPlaySideButtons();
         });
         
@@ -219,27 +232,35 @@ function countDown(){
 }
 
 
-function countDownTime(min,element,max,mins,hrs,id,fallbackf){
-    let value  = parseInt(element.innerText);
+function countDownTime(min,secs,max,mins,hrs,id,fallbackf){
+
+    let seconds  = parseInt(secs.innerText);
     let minutes = parseInt(mins.innerText);
     let hours = parseInt(hrs.innerText);
-    if(value > min){
-        value -=1;
-        element.innerText =value < 10?'0'+value:value;
-    } else {
-        if(minutes<=max & minutes > min){
-            minutes -=1;
-            mins.innerHTML = minutes < 10 ? '0' + minutes : minutes
-            element.innerText = max;
-        } else if(minutes===0 & hours > 0){
+
+    // count down for seconds when greater than zero
+    if(seconds > min){
+        seconds -=1;
+        secs.innerText =seconds < 10?'0'+seconds:seconds;
+    } else { // count down for seconds when less than zero
+
+        if(minutes > 0){ // check minutes
+            minutes -= 1;
+            seconds = max;
+        } else if(minutes === 0 & hours > 0) { // check minutes and hours
             minutes = max;
+            seconds = max;
             hours -= 1;
-            mins.innerHTML = hours < 10 ? '0' + hours : hours
-            element.innerText = max;
-        } else {
-            element.innerText = value < 10 ? '0' + value : value;
-            clearInterval(id);
+        } else { // if hrs =0, mins =0, and secs = 0.
+            clearInterval(intervalIdCtDwn);
             fallbackf();
         }
+        // update DOM element.
+        hrs.innerText = hours < 10?'0'+hours:hours;
+        mins.innerText = minutes < 10 ? '0'+minutes:minutes;
+        secs.innerText =seconds < 10?'0'+seconds:seconds;
+
     }
 }
+
+
