@@ -285,6 +285,12 @@ function countDownTime(min,secs,max,mins,hrs,id,fallbackf){
         } else { // if hrs =0, mins =0, and secs = 0.
             clearInterval(intervalIdCtDwn);
             fallbackf();
+            alarm();
+            showNotification(
+                '<i class="fa-solid fa-bell"></i>',
+                'Timer done :)',
+                'moodDanger'
+            )
         }
         // update DOM element.
         hrs.innerText = hours < 10?'0'+hours:display11(hours);
@@ -324,34 +330,42 @@ function addPresetTimer(){
             span.innerText = presetTime;
             customTimerEmpty.appendChild(span);
             customTimerEmpty.classList.remove('empty');
+            showNotification('<i class="fa-solid fa-circle-plus"></i>','Added Preset: You Added a timer preset.','moodSuccess');
 
         } else {
            showNotification(
             '<i class="fa-solid fa-circle-info"></i>',
-            'Duplicate : This timer preset already exists.'
+            'Duplicate : This timer preset already exists.',
+            'moodWarning'
            );
         }
     } else {
         showNotification(
             '<i class="fa-solid fa-circle-info"></i>',
-            'Timer Presets full, long press timer pills to delete.'
+            'Timer Presets full, long press timer pills to delete.',
+            'moodWarning'
            );
     }
 }
 
-function showNotification(icon,message){
+function showNotification(icon,message,mood){
     const popup = document.querySelector('.interactivePops');
     popup.querySelector('.icon').innerHTML = icon;
     popup.querySelector('.content').innerHTML = message;
+    if(mood){
+        popup.classList.remove('default');
+        popup.classList.add(mood);
+    }
     popup.classList.remove('hide');
 
-    setTimeout(hideNotification,3000);
+    setTimeout(()=>{hideNotification(mood)},3000);
 }
 
-function hideNotification(){
+function hideNotification(mood){
     const popup = document.querySelector('.interactivePops');
     popup.querySelector('.icon').innerHTML = '<i class="fa-solid fa-bell"></i>';
     popup.querySelector('.content').innerHTML = 'Message: Hello world !';
+    popup.classList.remove(mood);
     popup.classList.add('hide');
 }
 
@@ -375,6 +389,7 @@ function dblClickPreset(presetDiv,index){
 function deletePreset(index){
     presetTimes.splice(index,1);
     reorderPresetsDiv();
+    showNotification('<i class="fa-solid fa-trash"></i>','Deleted Preset: You deleted a timer preset.','moodDanger');
 
 }
 
@@ -414,6 +429,23 @@ function loadPreset(presetDiv){
         s.innerText = time[2];
         enableTimerPlaySideButtons(); 
     }
+
+}
+
+function alarm(){
+    startpulsingNotification();
+}
+
+function startpulsingNotification(){
+    const pulserWrap = document.querySelector('.cardContentWrapper');
+    pulserWrap.classList.add('cardContentWrapperNotification');
+
+    setTimeout(stopPulsingNotification,5000);
+}
+
+function stopPulsingNotification(){
+    const pulserWrap = document.querySelector('.cardContentWrapper');
+    pulserWrap.classList.remove('cardContentWrapperNotification');
 
 }
 

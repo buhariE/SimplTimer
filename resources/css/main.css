@@ -217,6 +217,19 @@ main {
 
     position: relative;
 }
+
+.cardContentWrapperNotification {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    from {
+        box-shadow: 0px 0px 10px 5px red;
+    }
+    to {
+        box-shadow: none;
+    }
+}
 .contentCards {
     width: fit-content;
     height: 100%;
@@ -613,6 +626,21 @@ main {
     font-size: 0.7em;
     font-weight: bold;
 
+}
+
+.moodSuccess {
+    background-color: var(--accent-color2);
+    color: var(--text-color);
+}
+
+.moodWarning {
+    background-color: rgb(123, 109, 30);
+    color: var(--text-color);
+}
+
+.moodDanger {
+    background-color: rgb(250, 64, 64);
+    color: var(--text-color);
 }
 
 .default {
