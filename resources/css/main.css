@@ -214,6 +214,8 @@ main {
     background-color: var(--secondary-color);
     border-radius: 15px;
     overflow: hidden;
+
+    position: relative;
 }
 .contentCards {
     width: fit-content;
@@ -371,7 +373,7 @@ main {
 }
 
 .customTimer {
-    width: 65px;
+    width: 60px;
     height: 25px;
     background-color: #0078DB;
     border-radius: 15px;
@@ -383,6 +385,32 @@ main {
     align-items: center;
     font-size:0.7em;
     font-weight:100;
+
+    cursor: pointer;
+    position: relative;
+}
+
+.customTimer .delete {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 15px;
+    background: red;
+    color:white;
+
+    display: flex;
+    align-items:center;
+    justify-content:center;
+
+    font-weight: bold;
+    font-size:1em;
+
+    cursor:pointer;
+    
+    top:2.5px;
+    right:2.5px;
+    
+    display: none;
 }
 
 .empty {
@@ -390,8 +418,12 @@ main {
     height: 20px;
     background-color: #a7a7a7;
     opacity: 0.5;
-    cursor: not-allowed;
+    cursor: default;
     border: dashed 2px #7a7a7a;
+}
+
+.empty>.delete {
+    display: none;
 }
 
 #timerCard .cardBody, #stopwatchCard .cardBody {
@@ -554,4 +586,40 @@ main {
 }
 .menuItem div {
     font-size: 0.75em;
+}
+
+.interactivePops {
+    width: 345px;
+    height: 35px;
+    border-radius:30px;
+    color:var(--primary-color);
+    
+    position: absolute;
+    transform: translateY(-165px);
+
+    display: grid;
+    grid-template-columns: 1fr 8fr;
+    align-items: center;
+
+
+}
+
+.interactivePops .icon {
+    font-size:0.85em;
+    justify-self: center;
+}
+
+.interactivePops .content {
+    font-size: 0.7em;
+    font-weight: bold;
+
+}
+
+.default {
+    background-color: var(--secondary-color);
+    opacity: 0.5;
+}
+
+.hide {
+    display: none;
 }

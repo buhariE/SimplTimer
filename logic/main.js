@@ -84,6 +84,14 @@ function openBackDrop(){
     timezoneDropDopdownContent.style.display = 'flex';
 }
 
+function intify(string){
+    return string.replaceAll(' ', '') === null?string:string.replaceAll(' ', '');
+}
+
+function display11(text){
+    return text === 11?'1 1':text;
+}
+
 function displayTime(){
     
     const now = new Date();
@@ -100,8 +108,11 @@ function displayTime(){
     }
 
     hours = hours < 10 ? '0' + hours : hours;
+    hours = hours === 11 ? '1 1':hours;
     minutes = minutes < 10 ? '0' + minutes : minutes;
+    minutes = minutes === 11 ? '1 1':minutes;
     seconds = seconds < 10 ? '0' + seconds : seconds;
+    seconds = seconds === 11 ? '1 1':seconds;
     
     const hoursDiv = document.querySelector('.timeHours');
     hoursDiv.innerText = hours;
@@ -147,37 +158,55 @@ function decrementTime(type){
 }
 
 function incrementTimeDisplay(min,max,element){
-    let value = parseInt(element.innerText);
+    let value = parseInt(intify(element.innerText));
     if(value < max){
         value += 1;
+        console.log(value);
     } else {
         value = max;
     }
-    element.innerText = value < 10 ? '0' + value : value;
+    
+    element.innerText = value < 10 ? '0' + value:display11(value);
 }
 
-function decrementTimeDisplay(min,max,element,update){
-    let value = parseInt(element.innerText);
+function decrementTimeDisplay(min,max,element){
+    let value = parseInt(intify(element.innerText));
     if(value > min){
         value -= 1;
     } else {
         value = min;
     }
-    element.innerText = value < 10 ? '0' + value : value;
+    
+    element.innerText = value < 10 ? '0' + value:display11(value);
 }
 
 function enableTimerPlaySideButtons(){
 
-    const timerHours = parseInt(document.querySelector('.timerHours .value .digits').innerText);
-    const timerMinutes = parseInt(document.querySelector('.timerMinutes .value .digits').innerText);
-    const timerSeconds = parseInt(document.querySelector('.timerSeconds .value .digits').innerText);
+    let hrsStr= intify(document.querySelector('.timerHours .value .digits').innerText); 
+    let minStr = intify(document.querySelector('.timerMinutes .value .digits').innerText);
+    let secsStr = intify(document.querySelector('.timerSeconds .value .digits').innerText);
+
+    let timeArray = [
+                     document.querySelector('.timerHours .value .digits'),
+                     document.querySelector('.timerMinutes .value .digits'),
+                     document.querySelector('.timerSeconds .value .digits')
+                    ]
+
+    const timerHours = parseInt(hrsStr);
+    const timerMinutes = parseInt(minStr);
+    const timerSeconds = parseInt(secsStr);
+
     if(timerHours > 0 || timerMinutes > 0 || timerSeconds >= 10){
         
+        timerSideButtons[0].classList.remove('disabled');
+        timerSideButtons[0].removeAttribute('aria-disabled');
+        timerSideButtons[0].addEventListener('click', function(){resetTime(timeArray);});
         timerSideButtons[1].classList.remove('disabled');
         timerSideButtons[1].removeAttribute('aria-disabled');
         timerSideButtons[1].addEventListener('click', countDown);
         timerSideButtons[2].classList.remove('disabled');
         timerSideButtons[2].removeAttribute('aria-disabled');
+        timerSideButtons[2].addEventListener('click', addPresetTimer);
 
     } else {
 
@@ -185,8 +214,10 @@ function enableTimerPlaySideButtons(){
             button.classList.add('disabled');
             button.setAttribute('aria-disabled', 'true');
             button.removeEventListener('click',countDown);
+            button.removeEventListener('click',resetTime);
+            button.removeEventListener('click',addPresetTimer);
         });
-        
+
     }
 
 }
@@ -234,14 +265,14 @@ function countDown(){
 
 function countDownTime(min,secs,max,mins,hrs,id,fallbackf){
 
-    let seconds  = parseInt(secs.innerText);
-    let minutes = parseInt(mins.innerText);
-    let hours = parseInt(hrs.innerText);
+    let seconds  = parseInt(intify(secs.innerText));
+    let minutes = parseInt(intify(mins.innerText));
+    let hours = parseInt(intify(hrs.innerText));
 
     // count down for seconds when greater than zero
     if(seconds > min){
         seconds -=1;
-        secs.innerText =seconds < 10?'0'+seconds:seconds;
+        secs.innerText =seconds < 10?'0'+seconds:display11(seconds);
     } else { // count down for seconds when less than zero
 
         if(minutes > 0){ // check minutes
@@ -256,11 +287,149 @@ function countDownTime(min,secs,max,mins,hrs,id,fallbackf){
             fallbackf();
         }
         // update DOM element.
-        hrs.innerText = hours < 10?'0'+hours:hours;
-        mins.innerText = minutes < 10 ? '0'+minutes:minutes;
-        secs.innerText =seconds < 10?'0'+seconds:seconds;
+        hrs.innerText = hours < 10?'0'+hours:display11(hours);
+
+        mins.innerText = minutes < 10 ? '0'+minutes:display11(minutes);
+
+        secs.innerText =seconds < 10?'0'+seconds:display11(seconds);
 
     }
 }
 
+
+function resetTime(timeArr){
+    timeArr.forEach((timeElement)=>{
+        timeElement.innerText = '00';
+    });
+    enableTimerPlaySideButtons();
+}
+
+
+let presetTimes = [];
+
+function addPresetTimer(){
+    const customTimerEmpty = document.querySelector('.customTimersWrappers>.empty');
+    let presetTime = '';
+    if(presetTimes.length<=5 & customTimerEmpty !== null){
+        const h = document.querySelector('.timerHours .value .digits');
+        const m = document.querySelector('.timerMinutes .value .digits');
+        const s = document.querySelector('.timerSeconds .value .digits');
+        
+        presetTime = `${h.innerText}:${m.innerText}:${s.innerText}`;
+        if(!presetTimes.includes(presetTime,0)){
+
+            presetTimes.push(presetTime);
+
+            const span = document.createElement('span');
+            span.innerText = presetTime;
+            customTimerEmpty.appendChild(span);
+            customTimerEmpty.classList.remove('empty');
+
+        } else {
+           showNotification(
+            '<i class="fa-solid fa-circle-info"></i>',
+            'Duplicate : This timer preset already exists.'
+           );
+        }
+    } else {
+        showNotification(
+            '<i class="fa-solid fa-circle-info"></i>',
+            'Timer Presets full, long press timer pills to delete.'
+           );
+    }
+}
+
+function showNotification(icon,message){
+    const popup = document.querySelector('.interactivePops');
+    popup.querySelector('.icon').innerHTML = icon;
+    popup.querySelector('.content').innerHTML = message;
+    popup.classList.remove('hide');
+
+    setTimeout(hideNotification,3000);
+}
+
+function hideNotification(){
+    const popup = document.querySelector('.interactivePops');
+    popup.querySelector('.icon').innerHTML = '<i class="fa-solid fa-bell"></i>';
+    popup.querySelector('.content').innerHTML = 'Message: Hello world !';
+    popup.classList.add('hide');
+}
+
+
+function dblClickPreset(presetDiv,index){
+    
+    presetDiv.querySelector('.delete').addEventListener('click',(e)=>{
+        deletePreset(index);
+        presetDiv.querySelector('.delete').style.display = 'none';
+    });
+    if(!presetDiv.classList.contains('empty')){
+        
+        if(presetDiv.querySelector('.delete').style.display === 'flex'){
+            presetDiv.querySelector('.delete').style.display = 'none';
+        } else {
+            presetDiv.querySelector('.delete').style.display = 'flex';
+        }
+    }
+}
+
+function deletePreset(index){
+    presetTimes.splice(index,1);
+    reorderPresetsDiv();
+
+}
+
+function reorderPresetsDiv(){
+    clearPresets();
+    fillPresets();
+}
+
+function clearPresets(){
+    document.querySelectorAll('.customTimersWrappers .customTimer').forEach((preset)=>{
+        if(preset.querySelector('span') !== null){
+            preset.querySelector('span').remove();
+            preset.classList.add('empty');
+        }
+    });
+}
+
+function fillPresets(){
+
+    for(let index = 0; index < presetTimes.length; index++){
+        const child = document.createElement('span');
+        child.innerText = presetTimes[index];
+        document.querySelectorAll('.customTimersWrappers .customTimer')[index].classList.remove('empty');
+        document.querySelectorAll('.customTimersWrappers .customTimer')[index].appendChild(child);
+    }
+}
+
+function loadPreset(presetDiv){
+    const h = document.querySelector('.timerHours .value .digits');
+    const m = document.querySelector('.timerMinutes .value .digits');
+    const s = document.querySelector('.timerSeconds .value .digits');
+
+    if(!presetDiv.classList.contains('empty')){
+        let time = presetDiv.innerText.split(':');
+        h.innerText = time[0];
+        m.innerText = time[1];
+        s.innerText = time[2];
+        enableTimerPlaySideButtons(); 
+    }
+
+}
+
+document.addEventListener(
+    'DOMContentLoaded',
+    ()=>{
+        document.querySelectorAll('.customTimersWrappers .customTimer').forEach(
+            (child,index)=>{
+                child.addEventListener('dblclick',(e)=>{
+                    dblClickPreset(child,index);
+                });
+                child.addEventListener('click',()=>{
+                    loadPreset(child);
+                })
+            }
+        );
+    }
+);
 
