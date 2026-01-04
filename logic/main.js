@@ -12,6 +12,8 @@ const menuItems = document.querySelectorAll('.menuItem');
 
 const timerSideButtons = document.querySelectorAll('.timerSideButtons div');
 
+const searchInput = document.getElementById('tzSearch');
+
 
 // init global variables
 let theme = 'dark';
@@ -20,6 +22,49 @@ const translateXvalue = 345;
 let contentCardMovement = 0;
 let max = 0;
 let min = -(2*translateXvalue);
+
+// plaecholder time zone values
+const timeZones = {
+    "America/New_York": "Eastern Time (US & Canada)",
+    "America/Chicago": "Central Time (US & Canada)",
+    "America/Denver": "Mountain Time (US & Canada)",
+    "America/Phoenix": "Arizona (No DST)",
+    "America/Los_Angeles": "Pacific Time (US & Canada)",
+    "America/Anchorage": "Alaska",
+    "Pacific/Honolulu": "Hawaii",
+    "America/Toronto": "Eastern Time (Canada)",
+    "America/Mexico_City": "Central Time (Mexico)",
+    "America/Caracas": "Venezuela Time",
+    "America/Santiago": "Santiago, Chile",
+    "America/Lima": "Lima, Peru",
+    "America/Bogota": "Bogota, Colombia",
+    "America/Argentina/Buenos_Aires": "Buenos Aires, Argentina",
+    "Europe/London": "Greenwich Mean Time (UK)",
+    "Europe/Paris": "Central European Time",
+    "Europe/Berlin": "CET (Germany)",
+    "Europe/Rome": "CET (Italy)",
+    "Europe/Madrid": "CET (Spain)",
+    "Europe/Amsterdam": "CET (Netherlands)",
+    "Europe/Stockholm": "CET (Sweden)",
+    "Europe/Istanbul": "Turkey Time",
+    "Europe/Moscow": "Moscow Time",
+    "Asia/Dubai": "Gulf Standard Time",
+    "Asia/Kolkata": "India Standard Time",
+    "Asia/Dhaka": "Bangladesh Time",
+    "Asia/Colombo": "Sri Lanka Time",
+    "Asia/Bangkok": "Indochina Time",
+    "Asia/Shanghai": "China Standard Time",
+    "Asia/Tokyo": "Japan Standard Time",
+    "Asia/Seoul": "Korea Standard Time",
+    "Asia/Singapore": "Singapore Time",
+    "Australia/Sydney": "Australian Eastern Time",
+    "Australia/Adelaide": "Australian Central Time",
+    "Australia/Perth": "Australian Western Time",
+    "Pacific/Auckland": "New Zealand Time",
+    "Pacific/Fiji": "Fiji Time",
+    "Pacific/Tongatapu": "Tonga Time",
+    "America/Edmonton": "Mountain Time (Calgary, Edmonton)"
+};  
 
 // functions
 function toggleTheme() {
@@ -82,6 +127,7 @@ function closeBackDropOnClickOutside(e){
 
 function openBackDrop(){
     timezoneDropDopdownContent.style.display = 'flex';
+    displayItems(Object.values(timeZones));
 }
 
 function intify(string){
@@ -454,7 +500,7 @@ document.addEventListener(
     ()=>{
         document.querySelectorAll('.customTimersWrappers .customTimer').forEach(
             (child,index)=>{
-                child.addEventListener('dblclick',(e)=>{
+                child.addEventListener('dblclick',()=>{
                     dblClickPreset(child,index);
                 });
                 child.addEventListener('click',()=>{
@@ -462,6 +508,98 @@ document.addEventListener(
                 })
             }
         );
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        document.querySelector('.timezoneValue').innerText = timeZone;
     }
 );
+
+const example = ["value","check","word","manifold","manifest","manieuse"]
+
+function search(){
+    let value = searchInput.value;
+    searchArray(value,Object.values(timeZones));
+}
+
+function searchArray(value,object){
+    let result = [];
+    result = object.filter((word)=>(value.length >= 1 & word.toLowerCase().includes(value)));
+    console.log(result);
+    showResults(value,result);
+    
+}
+
+function showResults(value,result){
+    if(value === ''){
+        displayItems(Object.values(timeZones));
+    } else if(result.length === 0) {
+        displayEmptyItem(value);
+    } else {
+        displayHitItems(result);
+    }
+}
+
+function displayItems(items){
+    clearList();
+    const label = document.querySelector('.timezoneValue');
+    for(let item of items){
+        const wrappers = document.querySelector('.tzDDCList');
+        const listDiv = document.createElement('div');
+        listDiv.classList.add('tzDDCListItem');
+        listDiv.classList.add('defaultItem');
+        let newValue = Object.keys(timeZones).find(key => timeZones[key] === item);
+        listDiv.addEventListener('click', () =>{ 
+            itemEvent(newValue)
+            listDiv.classList.add('selectedTimeZone');
+        });
+        if(label.innerText === newValue){
+            listDiv.classList.add('selectedTimeZone');
+        } else {
+            listDiv.classList.remove('selectedTimeZone');
+        }
+        listDiv.innerText = item;
+        wrappers.appendChild(listDiv);
+    }
+}
+
+function displayHitItems(items) {
+    clearList();
+    const label = document.querySelector('.timezoneValue');
+    for (let item of items) {
+        const wrappers = document.querySelector('.tzDDCList');
+        const listDiv = document.createElement('div');
+        listDiv.classList.add('tzDDCListItem');
+        listDiv.classList.add('hitItem');
+        let newValue = Object.keys(timeZones).find(key => timeZones[key] === item);
+        listDiv.addEventListener('click', () => {
+            itemEvent(newValue)
+            listDiv.classList.add('selectedTimeZone');
+        });
+        if (label.innerText === newValue) {
+            listDiv.classList.add('selectedTimeZone');
+            listDiv.classList.remove('hitItem');
+        } else {
+            listDiv.classList.remove('selectedTimeZone');
+        }
+        listDiv.innerText = item;
+        wrappers.appendChild(listDiv);
+    }
+}
+
+function displayEmptyItem(word){
+    clearList();
+    const wrappers = document.querySelector('.tzDDCList');
+    wrappers.innerHTML = `<div class="tzDDCListItem emptyList">no result found for '${word}'</div>`;
+}
+
+function clearList(){
+    const wrappers = document.querySelector('.tzDDCList');
+    wrappers.innerHTML = ``; 
+}
+
+function itemEvent(newValue){
+    const label = document.querySelector('.timezoneValue');
+    label.innerText = newValue;
+    closeBackDrop();
+    showNotification('<i class="fa-solid fa-globe"></i>',`Time-zone: ${newValue}`,'moodSuccess');
+}
 

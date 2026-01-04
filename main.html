@@ -11,13 +11,13 @@
 <body>
     <header>
         <div class="title">SimplTimer</div>
-        <div class="themeToggleWrapper" onclick="toggleTheme()">
+        <button class="themeToggleWrapper" onclick="toggleTheme()">
             <i class="fa-solid fa-moon"></i>
             <i class="fa-solid fa-sun"></i>
             <div class="themeToggleCircle">
                 <i class="fa-solid fa-moon"></i>
             </div>
-        </div>
+        </button>
     </header>
     <main>
         <div class="interactivePops default hide">
@@ -32,20 +32,20 @@
             <div class="contentCards">
                 <div class="contentCard" id="worldClockCard" onload="displayTime()">
                     <div class="cardHead">
-                        <div class="timeZoneDropDown" onclick="openBackDrop()">
+                        <button class="timeZoneDropDown" onclick="openBackDrop()">
                             <div class="timezoneValue">Time zone</div>
                             <div class="dropDownBtn">
                                 <i class="fa-solid fa-caret-up"></i>
                                 <i class="fa-solid fa-caret-down"></i>
                             </div>
-                        </div>
-                        <div class="hourFormatToggle" onclick="toggleFormat()">
+                        </button>
+                        <button class="hourFormatToggle" onclick="toggleFormat()">
                             <div class="format12">12H</div>
                             <div class="format24">24H</div>
                             <div class="hourToggleCircle">
                                 12H
                             </div>
-                        </div>
+                        </button>
                     </div>
                     <div class="cardBody">
                         <div class="worldTimeWrapper">
@@ -164,18 +164,18 @@
         </div>
         <div class="menuWrapper">
             <!-- To do: move activemenu back to here -->
-            <div class="menuItem activeMenu" id="worldClock" onclick="moveCards(0)">
+            <button class="menuItem activeMenu" id="worldClock" onclick="moveCards(0)">
                 <i class="fa-solid fa-globe"></i>
                 <div>World clock</div>
-            </div>
-            <div class="menuItem" id="timer" onclick="moveCards(1)">
+            </button>
+            <button class="menuItem" id="timer" onclick="moveCards(1)">
                 <i class="fa-solid fa-hourglass-half"></i>
                 <div>Timer</div>
-            </div>
-            <div class="menuItem" id="stopwatch" onclick="moveCards(2)">
+            </button>
+            <button class="menuItem" id="stopwatch" onclick="moveCards(2)">
                 <i class="fa-solid fa-stopwatch"></i>
                 <div>Stopwatch</div>
-            </div>
+            </button>
         </div>
         <div class="timezoneBackDrop" onclick="closeBackDropOnClickOutside(event)">
             <div class="timezoneDropDownContent">
@@ -183,23 +183,24 @@
                     <div class="headertext">
                         Choose a time zone
                     </div>
-                    <div class="closeBtn" onclick="closeBackDrop()">
+                    <button class="closeBtn" onclick="closeBackDrop()">
                         <i class="fa-solid fa-xmark"></i>
-                    </div>
+                    </button>
                 </div>
-                <div class="tzDDCSearch">
+                <div class="tzDDCSearch" role="search">
                     <div class="searchWrapper">
-                        <input type="search" name="" id="" placeholder="Search by city/state/province">
+                        <input type="search" 
+                               name="q"
+                               id="tzSearch" 
+                               placeholder="Search by city/state/province"
+                               incremental="true"
+                               role="combobox"
+                               oninput="search()"
+                          >
                         <i class="fa-solid fa-search"></i>
                     </div>
                 </div>
-                <div class="tzDDCList">
-                    <div class="tzDDCListItem loadingItem">Loading...</div>
-                    <div class="tzDDCListItem loadingItem">Loading...</div>
-                    <div class="tzDDCListItem loadingItem">Loading...</div>
-                    <div class="tzDDCListItem loadingItem">Loading...</div>
-                    <div class="tzDDCListItem loadingItem">Loading...</div>
-                    
+                <div class="tzDDCList">                    
                     <!-- Time zone list items will be populated here dynamically -->
                 </div>
             </div>
