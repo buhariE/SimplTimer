@@ -18,6 +18,7 @@ const searchInput = document.getElementById('tzSearch');
 // init global variables
 let theme = 'dark';
 let hourFormat = '12H';
+let timeZoneFormat = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const translateXvalue = 345;
 let contentCardMovement = 0;
 let max = 0;
@@ -28,6 +29,7 @@ const timeZones = {
     "Africa/Accra": "Ghana Standard Time",
     "Africa/Cairo":"Egypt Standard Time",
     "Africa/Johannesburg":"South-Africa Standard Time",
+    "Africa/Lagos":"Nigeria Standard Time",
     "Asia/Dubai": "Gulf Standard Time",
     "Asia/Kolkata": "India Standard Time",
     "Asia/Dhaka": "Bangladesh Time",
@@ -139,37 +141,45 @@ function intify(string){
 }
 
 function display11(text){
-    return text === 11?'1 1':text;
+    return text == 11?'1 1':text;
 }
 
 function displayTime(){
 
+    const presentDateFormatter = Intl.DateTimeFormat(
+        'en-US',
+        {
+            timeZone: timeZoneFormat,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+        }
+    );
+
     const now = new Date();
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-    let seconds = now.getSeconds();
+    let timeFormattedArr = presentDateFormatter.format(now).split(':');
+
+    let hours = intify(timeFormattedArr[0]);
+    let minutes = intify(timeFormattedArr[1]);
+    let seconds = intify(timeFormattedArr[2]);
     let ampm = '';
     if(hourFormat === '12H'){
         ampm = hours >= 12 ? ' PM' : ' AM';
         hours = hours % 12;
+        hours = hours < 12 ? `0${hours}`:hours;
         hours = hours ? hours : 12; // the hour '0' should be '12'
     } else {
         ampm = 'HRS';
     }
 
-    hours = hours < 10 ? '0' + hours : hours;
-    hours = hours === 11 ? '1 1':hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    minutes = minutes === 11 ? '1 1':minutes;
-    seconds = seconds < 10 ? '0' + seconds : seconds;
-    seconds = seconds === 11 ? '1 1':seconds;
 
     const hoursDiv = document.querySelector('.timeHours');
-    hoursDiv.innerText = hours;
+    hoursDiv.innerText = display11(hours);
     const minutesDiv = document.querySelector('.timeMinutes');
-    minutesDiv.innerText = minutes;
+    minutesDiv.innerText = display11(minutes);
     const secondsDiv = document.querySelector('.timeSeconds');
-    secondsDiv.innerText = seconds;
+    secondsDiv.innerText = display11(seconds);
     const ampmDiv = document.querySelector('.timePeriod');
     ampmDiv.innerText = ampm;
 
@@ -517,8 +527,8 @@ document.addEventListener(
                 })
             }
         );
-        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        document.querySelector('.timezoneValue').innerText = timeZone;
+        // const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        document.querySelector('.timezoneValue').innerText = timeZoneFormat;
     }
 );
 
@@ -610,6 +620,7 @@ function itemEvent(newValue){
     label.innerText = newValue;
     closeBackDrop();
     showNotification('<i class="fa-solid fa-globe"></i>',`Time-zone: ${newValue}`,'moodSuccess');
+    timeZoneFormat = newValue;
 }
 
 // Stopwatch Functions

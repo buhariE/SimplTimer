@@ -104,8 +104,8 @@ main {
     position: absolute;
     top:0;
     left:0;
-    background-color: #ffffff13;
-    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
     display:none;
     justify-content: center;
     align-items: center;
@@ -113,13 +113,13 @@ main {
 }
 
 .timezoneDropDownContent {
-    width: 278px;
-    height: 328px;
+    width: calc(345px - 20px);
+    height: calc(400px - 20px);
     background-color: var(--secondary-color);
     border-radius: 15px;
     overflow: hidden;
     border: solid 1px #fff;
-    box-shadow: 0 0 10px #00000088;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     color: var(--primary-color);
     padding:10px;
 
@@ -157,17 +157,19 @@ main {
 
 .tzDDCSearch {
     width: 100%;
-    height: 10%;
+    height: calc(15% - 12px);
     display: flex;
     justify-content: center;
     align-items: center;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    padding-bottom:10px;
 }
 
 .searchWrapper {
     width: 70%;
     height: 100%;
     background-color: #ffffff;
-    border-radius: 15px;
+    border-radius: 25px;
     display: flex;
     align-items: center;
     padding: 0 10px;
@@ -777,7 +779,7 @@ main {
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
-    z-index: 1000;
+    z-index: 15;
     justify-content: center;
     align-items: center;
 }
@@ -793,8 +795,8 @@ main {
 }
 
 .lapModalContent {
-    width: 345px;
-    max-height: 400px;
+    width: calc(345px - 30px);
+    max-height: calc(400px - 30px);
     background-color: var(--secondary-color);
     border-radius: 15px;
     padding: 15px;
@@ -833,8 +835,8 @@ main {
 .closeLapModal {
     width: 30px;
     height: 30px;
-    background-color: var(--primary-color);
-    color: var(--text-color);
+    background-color: transparent;
+    color: var(--primary-color);
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -1046,7 +1048,7 @@ header {
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
-    z-index: 1001;
+    z-index: 20;
     justify-content: center;
     align-items: center;
 }
@@ -1057,7 +1059,7 @@ header {
 }
 
 .helpModalContent {
-    width: 345px;
+    width: calc(345px - 40px);
     max-width: 90%;
     max-height: 500px;
     background-color: var(--secondary-color);
