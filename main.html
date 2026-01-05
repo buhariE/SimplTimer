@@ -2,15 +2,19 @@
 <html lang="en">
 <head>
     <!-- font awesome -->
-    <script src="https://kit.fontawesome.com/53851b2526.js" crossorigin="anonymous"></script> 
+    <script src="https://kit.fontawesome.com/53851b2526.js" crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SimplTimer</title>
     <link rel="stylesheet" href="resources/css/main.css">
 </head>
 <body>
-    <header>
-        <div class="title">SimplTimer</div>
+	<header>
+    <div class="title">SimplTimer</div>
+    <div class="headerButtons">
+        <button class="helpButton" onclick="showKeyboardHelp()" title="Keyboard Shortcuts">
+            <i class="fa-solid fa-keyboard"></i>
+        </button>
         <button class="themeToggleWrapper" onclick="toggleTheme()">
             <i class="fa-solid fa-moon"></i>
             <i class="fa-solid fa-sun"></i>
@@ -18,7 +22,8 @@
                 <i class="fa-solid fa-moon"></i>
             </div>
         </button>
-    </header>
+    </div>
+</header>
     <main>
         <div class="interactivePops default hide">
             <span class="icon">
@@ -96,7 +101,7 @@
 
                                 <div class="value">
                                     <span class="digits">00</span>
-                                    <span class="label">H</span> 
+                                    <span class="label">H</span>
                                 </div>
                                 <div class="decrement" onclick="decrementTime('hours')">
                                     <i class="fa-solid fa-chevron-down"></i>
@@ -109,7 +114,7 @@
                                 </div>
                                 <div class="value">
                                     <span class="digits">00</span>
-                                    <span class="label">M</span> 
+                                    <span class="label">M</span>
                                 </div>
                                 <div class="decrement" onclick="decrementTime('minutes')">
                                     <i class="fa-solid fa-chevron-down"></i>
@@ -121,7 +126,7 @@
                                 </div>
                                 <div class="value">
                                     <span class="digits">00</span>
-                                    <span class="label">S</span> 
+                                    <span class="label">S</span>
                                 </div>
                                 <div class="decrement" onclick="decrementTime('seconds')">
                                     <i class="fa-solid fa-chevron-down"></i>
@@ -142,7 +147,12 @@
                     </div>
                 </div>
                 <div class="contentCard" id="stopwatchCard">
-                    <div class="cardHead"></div>
+                    <div class="cardHead">
+                        <button class="viewLapsBtn" onclick="toggleLapModal()" style="display: none;">
+                            <i class="fa-solid fa-list"></i>
+                            <span id="lapCountBadge">0</span>
+                        </button>
+                    </div>
                     <div class="cardBody">
                         <div class="stopwatchWrapper">
                             <div class="timeHours">00</div>
@@ -151,11 +161,14 @@
                             <div class="timeSeconds">00</div>
                         </div>
                         <div class="stopwatchSideButtons">
-                            <div class="resetButton disabled">
+                            <div class="resetButton disabled" aria-disabled="true" onclick="resetStopwatch()">
                                 <i class="fa-solid fa-rotate-right"></i>
                             </div>
-                            <div class="playButton">
+                            <div class="playButton" onclick="startStopwatch()">
                                 <i class="fa-solid fa-play"></i>
+                            </div>
+                            <div class="lapButton disabled" aria-disabled="true" onclick="recordLap()">
+                                <i class="fa-solid fa-flag"></i>
                             </div>
                         </div>
                     </div>
@@ -189,9 +202,9 @@
                 </div>
                 <div class="tzDDCSearch" role="search">
                     <div class="searchWrapper">
-                        <input type="search" 
+                        <input type="search"
                                name="q"
-                               id="tzSearch" 
+                               id="tzSearch"
                                placeholder="Search by city/state/province"
                                incremental="true"
                                role="combobox"
@@ -200,12 +213,63 @@
                         <i class="fa-solid fa-search"></i>
                     </div>
                 </div>
-                <div class="tzDDCList">                    
+                <div class="tzDDCList">
                     <!-- Time zone list items will be populated here dynamically -->
                 </div>
             </div>
         </div>
     </main>
+    <div class="lapModal" id="lapModal" onclick="toggleLapModal(event)">
+        <div class="lapModalContent" onclick="event.stopPropagation()">
+            <div class="lapModalHeader">
+                <h3>Lap Times (<span id="lapCountModal">0</span>)</h3>
+                <button class="closeLapModal" onclick="toggleLapModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="lapTimesListWrapper">
+                <div class="noLapsMessage">No laps recorded yet</div>
+            </div>
+        </div>
+    </div>
+    <!-- Keyboard Shortcuts Help Modal -->
+    <div class="helpModal" id="helpModal" onclick="toggleHelpModal(event)">
+        <div class="helpModalContent" onclick="event.stopPropagation()">
+            <div class="helpModalHeader">
+                <h3>Keyboard Shortcuts</h3>
+                <button class="closeHelpModal" onclick="toggleHelpModal()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="helpModalBody">
+                <div class="shortcutGroup">
+                    <h4>Navigation</h4>
+                    <div class="shortcut"><kbd>1</kbd> World Clock</div>
+                    <div class="shortcut"><kbd>2</kbd> Timer</div>
+                    <div class="shortcut"><kbd>3</kbd> Stopwatch</div>
+                </div>
+                <div class="shortcutGroup">
+                    <h4>Controls</h4>
+                    <div class="shortcut"><kbd>Space</kbd> Start/Stop</div>
+                    <div class="shortcut"><kbd>R</kbd> Reset</div>
+                    <div class="shortcut"><kbd>L</kbd> Record Lap (Stopwatch)</div>
+                    <div class="shortcut"><kbd>V</kbd> View Laps</div>
+                </div>
+                <div class="shortcutGroup">
+                    <h4>Timer Adjustment</h4>
+                    <div class="shortcut"><kbd>Tab</kbd> Cycle focus (H/M/S)</div>
+                    <div class="shortcut"><kbd>↑</kbd> Increment</div>
+                    <div class="shortcut"><kbd>↓</kbd> Decrement</div>
+                </div>
+                <div class="shortcutGroup">
+                    <h4>Settings</h4>
+                    <div class="shortcut"><kbd>T</kbd> Toggle Theme</div>
+                    <div class="shortcut"><kbd>H</kbd> Toggle Hour Format</div>
+                    <div class="shortcut"><kbd>Esc</kbd> Close Modal</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 <script src="logic/main.js"></script>
 </html>

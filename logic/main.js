@@ -64,7 +64,7 @@ const timeZones = {
     "Pacific/Fiji": "Fiji Time",
     "Pacific/Tongatapu": "Tonga Time",
     "America/Edmonton": "Mountain Time (Calgary, Edmonton)"
-};  
+};
 
 // functions
 function toggleTheme() {
@@ -139,7 +139,7 @@ function display11(text){
 }
 
 function displayTime(){
-    
+
     const now = new Date();
     let hours = now.getHours();
     let minutes = now.getMinutes();
@@ -159,7 +159,7 @@ function displayTime(){
     minutes = minutes === 11 ? '1 1':minutes;
     seconds = seconds < 10 ? '0' + seconds : seconds;
     seconds = seconds === 11 ? '1 1':seconds;
-    
+
     const hoursDiv = document.querySelector('.timeHours');
     hoursDiv.innerText = hours;
     const minutesDiv = document.querySelector('.timeMinutes');
@@ -211,7 +211,7 @@ function incrementTimeDisplay(min,max,element){
     } else {
         value = max;
     }
-    
+
     element.innerText = value < 10 ? '0' + value:display11(value);
 }
 
@@ -222,13 +222,13 @@ function decrementTimeDisplay(min,max,element){
     } else {
         value = min;
     }
-    
+
     element.innerText = value < 10 ? '0' + value:display11(value);
 }
 
 function enableTimerPlaySideButtons(){
 
-    let hrsStr= intify(document.querySelector('.timerHours .value .digits').innerText); 
+    let hrsStr= intify(document.querySelector('.timerHours .value .digits').innerText);
     let minStr = intify(document.querySelector('.timerMinutes .value .digits').innerText);
     let secsStr = intify(document.querySelector('.timerSeconds .value .digits').innerText);
 
@@ -243,7 +243,7 @@ function enableTimerPlaySideButtons(){
     const timerSeconds = parseInt(secsStr);
 
     if(timerHours > 0 || timerMinutes > 0 || timerSeconds >= 10){
-        
+
         timerSideButtons[0].classList.remove('disabled');
         timerSideButtons[0].removeAttribute('aria-disabled');
         timerSideButtons[0].addEventListener('click', function(){resetTime(timeArray);});
@@ -275,15 +275,15 @@ function countDown(){
     const timerMinutesDigits = document.querySelector('.timerMinutes .value .digits');
     const timerSecondsDigits = document.querySelector('.timerSeconds .value .digits');
 
-    
+
     if (timerSideButtons[1].classList.contains('stop')){
 
-        
+
         timerSideButtons[1].classList.remove('stop');
         timerSideButtons[1].innerHTML = '<i class="fa-solid fa-play"></i>';
-        
+
         enableTimerPlaySideButtons();
-        
+
         clearInterval(intervalIdCtDwn);
 
     } else {
@@ -300,9 +300,9 @@ function countDown(){
 
             enableTimerPlaySideButtons();
         });
-        
+
     }
-    
+
 
 
 
@@ -366,7 +366,7 @@ function addPresetTimer(){
         const h = document.querySelector('.timerHours .value .digits');
         const m = document.querySelector('.timerMinutes .value .digits');
         const s = document.querySelector('.timerSeconds .value .digits');
-        
+
         presetTime = `${h.innerText}:${m.innerText}:${s.innerText}`;
         if(!presetTimes.includes(presetTime,0)){
 
@@ -417,13 +417,13 @@ function hideNotification(mood){
 
 
 function dblClickPreset(presetDiv,index){
-    
+
     presetDiv.querySelector('.delete').addEventListener('click',(e)=>{
         deletePreset(index);
         presetDiv.querySelector('.delete').style.display = 'none';
     });
     if(!presetDiv.classList.contains('empty')){
-        
+
         if(presetDiv.querySelector('.delete').style.display === 'flex'){
             presetDiv.querySelector('.delete').style.display = 'none';
         } else {
@@ -473,7 +473,7 @@ function loadPreset(presetDiv){
         h.innerText = time[0];
         m.innerText = time[1];
         s.innerText = time[2];
-        enableTimerPlaySideButtons(); 
+        enableTimerPlaySideButtons();
     }
 
 }
@@ -525,7 +525,7 @@ function searchArray(value,object){
     result = object.filter((word)=>(value.length >= 1 & word.toLowerCase().includes(value)));
     console.log(result);
     showResults(value,result);
-    
+
 }
 
 function showResults(value,result){
@@ -547,7 +547,7 @@ function displayItems(items){
         listDiv.classList.add('tzDDCListItem');
         listDiv.classList.add('defaultItem');
         let newValue = Object.keys(timeZones).find(key => timeZones[key] === item);
-        listDiv.addEventListener('click', () =>{ 
+        listDiv.addEventListener('click', () =>{
             itemEvent(newValue)
             listDiv.classList.add('selectedTimeZone');
         });
@@ -593,7 +593,7 @@ function displayEmptyItem(word){
 
 function clearList(){
     const wrappers = document.querySelector('.tzDDCList');
-    wrappers.innerHTML = ``; 
+    wrappers.innerHTML = ``;
 }
 
 function itemEvent(newValue){
@@ -603,3 +603,470 @@ function itemEvent(newValue){
     showNotification('<i class="fa-solid fa-globe"></i>',`Time-zone: ${newValue}`,'moodSuccess');
 }
 
+// Stopwatch Functions
+let intervalIdStopwatch;
+let stopwatchRunning = false;
+
+function startStopwatch() {
+    const stopwatchHours = document.querySelector('#stopwatchCard .timeHours');
+    const stopwatchMinutes = document.querySelector('#stopwatchCard .timeMinutes');
+    const stopwatchSeconds = document.querySelector('#stopwatchCard .timeSeconds');
+
+    const playButton = document.querySelector('#stopwatchCard .playButton');
+    const resetButton = document.querySelector('#stopwatchCard .resetButton');
+    const lapButton = document.querySelector('#stopwatchCard .lapButton');
+
+    if (stopwatchRunning) {
+        clearInterval(intervalIdStopwatch);
+        stopwatchRunning = false;
+        playButton.innerHTML = '<i class="fa-solid fa-play"></i>';
+        resetButton.classList.remove('disabled');
+        resetButton.removeAttribute('aria-disabled');
+
+        // Disable lap button when paused
+        lapButton.classList.add('disabled');
+        lapButton.setAttribute('aria-disabled', 'true');
+    } else {
+        stopwatchRunning = true;
+        playButton.innerHTML = '<i class="fa-solid fa-pause"></i>';
+        resetButton.classList.add('disabled');
+        resetButton.setAttribute('aria-disabled', 'true');
+
+        // Enable lap button when running
+        lapButton.classList.remove('disabled');
+        lapButton.removeAttribute('aria-disabled');
+
+        intervalIdStopwatch = setInterval(() => {
+            incrementStopwatch(stopwatchSeconds, stopwatchMinutes, stopwatchHours);
+        }, 1000);
+    }
+}
+
+function incrementStopwatch(secondsEl, minutesEl, hoursEl) {
+    let seconds = parseInt(intify(secondsEl.innerText));
+    let minutes = parseInt(intify(minutesEl.innerText));
+    let hours = parseInt(intify(hoursEl.innerText));
+
+    seconds += 1;
+
+    if (seconds >= 60) {
+        seconds = 0;
+        minutes += 1;
+    }
+
+    if (minutes >= 60) {
+        minutes = 0;
+        hours += 1;
+    }
+
+    if (hours >= 100) {
+        clearInterval(intervalIdStopwatch);
+        stopwatchRunning = false;
+        const playButton = document.querySelector('#stopwatchCard .playButton');
+        playButton.innerHTML = '<i class="fa-solid fa-play"></i>';
+        showNotification(
+            '<i class="fa-solid fa-stopwatch"></i>',
+            'Stopwatch maxed out at 99:59:59',
+            'moodWarning'
+        );
+        return;
+    }
+
+    secondsEl.innerText = seconds < 10 ? '0' + seconds : display11(seconds);
+    minutesEl.innerText = minutes < 10 ? '0' + minutes : display11(minutes);
+    hoursEl.innerText = hours < 10 ? '0' + hours : display11(hours);
+}
+
+function resetStopwatch() {
+    if (!stopwatchRunning) {
+        const stopwatchHours = document.querySelector('#stopwatchCard .timeHours');
+        const stopwatchMinutes = document.querySelector('#stopwatchCard .timeMinutes');
+        const stopwatchSeconds = document.querySelector('#stopwatchCard .timeSeconds');
+
+        stopwatchHours.innerText = '00';
+        stopwatchMinutes.innerText = '00';
+        stopwatchSeconds.innerText = '00';
+
+        const resetButton = document.querySelector('#stopwatchCard .resetButton');
+        resetButton.classList.add('disabled');
+        resetButton.setAttribute('aria-disabled', 'true');
+
+        // Clear all lap times
+        clearLaps();
+    }
+}
+// Lap Times Functionality
+let lapTimes = [];
+let lastLapTime = 0;
+
+function recordLap() {
+    if (stopwatchRunning) {
+        const stopwatchHours = document.querySelector('#stopwatchCard .timeHours');
+        const stopwatchMinutes = document.querySelector('#stopwatchCard .timeMinutes');
+        const stopwatchSeconds = document.querySelector('#stopwatchCard .timeSeconds');
+
+        // Get current time values - handle the "1 1" special case
+        let hoursText = stopwatchHours.innerText;
+        let minutesText = stopwatchMinutes.innerText;
+        let secondsText = stopwatchSeconds.innerText;
+
+        // Remove spaces (for the "1 1" display)
+        hoursText = hoursText.replace(/\s/g, '');
+        minutesText = minutesText.replace(/\s/g, '');
+        secondsText = secondsText.replace(/\s/g, '');
+
+        const hours = parseInt(hoursText) || 0;
+        const minutes = parseInt(minutesText) || 0;
+        const seconds = parseInt(secondsText) || 0;
+
+        // Calculate total seconds
+        const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
+        // Calculate lap time (difference from last lap)
+        const lapSeconds = totalSeconds - lastLapTime;
+
+        console.log('Debug:', {
+            hours, minutes, seconds,
+            totalSeconds,
+            lastLapTime,
+            lapSeconds,
+            lapNumber: lapTimes.length + 1
+        });
+
+        lastLapTime = totalSeconds;
+
+        // Store lap data
+        const lapData = {
+            number: lapTimes.length + 1,
+            totalTime: formatTime(hours, minutes, seconds),
+            totalSeconds: totalSeconds,
+            lapSeconds: lapSeconds,
+            lapTime: formatTimeFromSeconds(lapSeconds)
+        };
+
+        lapTimes.push(lapData);
+
+        // Display the lap
+        displayLap(lapData);
+
+        // Notification
+        showNotification(
+            '<i class="fa-solid fa-flag"></i>',
+            `Lap ${lapData.number}: ${lapData.lapTime}`,
+            'moodSuccess'
+        );
+    }
+}
+
+function formatTimeFromSeconds(totalSeconds) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const h = hours < 10 ? '0' + hours : hours.toString();
+    const m = minutes < 10 ? '0' + minutes : minutes.toString();
+    const s = seconds < 10 ? '0' + seconds : seconds.toString();
+
+    return `${h}:${m}:${s}`;
+}
+
+function formatTime(hours, minutes, seconds) {
+    const h = hours < 10 ? '0' + hours : hours.toString();
+    const m = minutes < 10 ? '0' + minutes : minutes.toString();
+    const s = seconds < 10 ? '0' + seconds : seconds.toString();
+
+    return `${h}:${m}:${s}`;
+}
+
+function displayLap(lapData) {
+    const lapListWrapper = document.querySelector('.lapTimesListWrapper');
+
+    // Remove "no laps" message if it exists (only once)
+    const noLapsMsg = lapListWrapper.querySelector('.noLapsMessage');
+    if (noLapsMsg) {
+        noLapsMsg.remove();
+    }
+
+    const lapItem = document.createElement('div');
+    lapItem.classList.add('lapTimeItem');
+    lapItem.setAttribute('data-lap-number', lapData.number);
+
+    lapItem.innerHTML = `
+        <span class="lapNumber">Lap ${lapData.number}</span>
+        <span class="lapTime">${lapData.lapTime}</span>
+    `;
+
+    // Add to top of list (most recent first)
+    lapListWrapper.insertBefore(lapItem, lapListWrapper.firstChild);
+
+    // Update lap count
+    updateLapCount();
+}
+
+function clearLaps() {
+    lapTimes = [];
+    lastLapTime = 0;
+    const lapListWrapper = document.querySelector('.lapTimesListWrapper');
+    lapListWrapper.innerHTML = '<div class="noLapsMessage">No laps recorded yet</div>';
+    updateLapCount();
+}
+
+function updateLapCount() {
+    const count = lapTimes.length;
+
+    // Update both counters
+    document.getElementById('lapCountModal').innerText = count;
+
+    const badge = document.getElementById('lapCountBadge');
+    if (badge) {
+        badge.innerText = count;
+    }
+
+    // Show/hide the view laps button
+    const viewLapsBtn = document.querySelector('.viewLapsBtn');
+    if (viewLapsBtn) {
+        if (count > 0) {
+            viewLapsBtn.style.display = 'flex';
+        } else {
+            viewLapsBtn.style.display = 'none';
+        }
+    }
+}
+
+function toggleLapModal(event) {
+    const modal = document.getElementById('lapModal');
+
+    // If clicking on the modal background (not the content), close it
+    if (event && event.target === modal) {
+        modal.classList.remove('show');
+    } else {
+        modal.classList.toggle('show');
+    }
+}
+
+// Keyboard Shortcuts
+document.addEventListener('keydown', (e) => {
+    // Don't trigger shortcuts when typing in search input
+    if (e.target.tagName === 'INPUT') {
+        return;
+    }
+
+    const key = e.key.toLowerCase();
+
+    // Get current active card index
+    let currentCardIndex = 0;
+    menuItems.forEach((item, idx) => {
+        if (item.classList.contains('activeMenu')) {
+            currentCardIndex = idx;
+        }
+    });
+
+    switch(key) {
+        case ' ': // Spacebar
+            e.preventDefault(); // Prevent page scroll
+            handleSpaceKey(currentCardIndex);
+            break;
+
+        case 'r':
+            e.preventDefault();
+            handleResetKey(currentCardIndex);
+            break;
+
+        case 'l':
+            e.preventDefault();
+            if (currentCardIndex === 2) { // Stopwatch
+                recordLap();
+            }
+            break;
+
+        case 'v':
+            e.preventDefault();
+            if (currentCardIndex === 2) { // Stopwatch
+                toggleLapModal();
+            }
+            break;
+
+        case '1':
+            e.preventDefault();
+            moveCards(0); // World Clock
+            break;
+
+        case '2':
+            e.preventDefault();
+            moveCards(1); // Timer
+            break;
+
+        case '3':
+            e.preventDefault();
+            moveCards(2); // Stopwatch
+            break;
+
+        case 't':
+            e.preventDefault();
+            toggleTheme();
+            break;
+
+        case 'h':
+            e.preventDefault();
+            toggleFormat();
+            break;
+
+        case 'escape':
+            e.preventDefault();
+            handleEscapeKey();
+            break;
+
+        case 'arrowup':
+            e.preventDefault();
+            if (currentCardIndex === 1) { // Timer
+                handleArrowKey('up');
+            }
+            break;
+
+        case 'arrowdown':
+            e.preventDefault();
+            if (currentCardIndex === 1) { // Timer
+                handleArrowKey('down');
+            }
+            break;
+    }
+});
+
+// Handle spacebar for play/pause
+function handleSpaceKey(cardIndex) {
+    if (cardIndex === 1) { // Timer
+        const playButton = document.querySelector('#timerCard .playButton');
+        if (!playButton.classList.contains('disabled')) {
+            countDown();
+        }
+    } else if (cardIndex === 2) { // Stopwatch
+        startStopwatch();
+    }
+}
+
+// Handle reset key
+function handleResetKey(cardIndex) {
+    if (cardIndex === 1) { // Timer
+        const resetButton = document.querySelector('#timerCard .resetButton');
+        if (!resetButton.classList.contains('disabled')) {
+            const timeArray = [
+                document.querySelector('.timerHours .value .digits'),
+                document.querySelector('.timerMinutes .value .digits'),
+                document.querySelector('.timerSeconds .value .digits')
+            ];
+            resetTime(timeArray);
+        }
+    } else if (cardIndex === 2) { // Stopwatch
+        const resetButton = document.querySelector('#stopwatchCard .resetButton');
+        if (!resetButton.classList.contains('disabled')) {
+            resetStopwatch();
+        }
+    }
+}
+
+// Handle escape key to close modals/dropdowns
+function handleEscapeKey() {
+    // Close timezone dropdown
+    const timezoneDropdown = document.querySelector('.timezoneBackDrop');
+    if (timezoneDropdown.style.display === 'flex') {
+        closeBackDrop();
+    }
+
+    // Close lap modal
+    const lapModal = document.getElementById('lapModal');
+    if (lapModal && lapModal.classList.contains('show')) {
+        toggleLapModal();
+    }
+}
+
+// Handle arrow keys for timer adjustment
+let timerFocusIndex = 0; // 0=hours, 1=minutes, 2=seconds
+
+function handleArrowKey(direction) {
+    const timeElements = [
+        document.querySelector('.timerHours .value .digits'),
+        document.querySelector('.timerMinutes .value .digits'),
+        document.querySelector('.timerSeconds .value .digits')
+    ];
+
+    // Visual indicator of which timer unit is "focused"
+    highlightTimerUnit(timerFocusIndex);
+
+    if (direction === 'up') {
+        if (timerFocusIndex === 0) incrementTime('hours');
+        else if (timerFocusIndex === 1) incrementTime('minutes');
+        else incrementTime('seconds');
+    } else {
+        if (timerFocusIndex === 0) decrementTime('hours');
+        else if (timerFocusIndex === 1) decrementTime('minutes');
+        else decrementTime('seconds');
+    }
+}
+
+function highlightTimerUnit(index) {
+    const elements = [
+        document.querySelector('.timerHours'),
+        document.querySelector('.timerMinutes'),
+        document.querySelector('.timerSeconds')
+    ];
+
+    elements.forEach((el, idx) => {
+        if (idx === index) {
+            el.style.opacity = '1';
+            el.style.transform = 'scale(1.05)';
+        } else {
+            el.style.opacity = '0.6';
+            el.style.transform = 'scale(1)';
+        }
+    });
+
+    // Reset after a short delay
+    setTimeout(() => {
+        elements.forEach(el => {
+            el.style.opacity = '1';
+            el.style.transform = 'scale(1)';
+        });
+    }, 200);
+}
+
+// Cycle through timer units with Tab key
+document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT') return;
+
+    if (e.key === 'Tab') {
+        e.preventDefault();
+
+        // Get current active card
+        let currentCardIndex = 0;
+        menuItems.forEach((item, idx) => {
+            if (item.classList.contains('activeMenu')) {
+                currentCardIndex = idx;
+            }
+        });
+
+        if (currentCardIndex === 1) { // Timer
+            timerFocusIndex = (timerFocusIndex + 1) % 3; // Cycle 0->1->2->0
+            highlightTimerUnit(timerFocusIndex);
+
+            showNotification(
+                '<i class="fa-solid fa-keyboard"></i>',
+                `Timer focus: ${['Hours', 'Minutes', 'Seconds'][timerFocusIndex]}`,
+                'default'
+            );
+        }
+    }
+});
+
+function showKeyboardHelp() {
+    toggleHelpModal();
+}
+
+function toggleHelpModal(event) {
+    const modal = document.getElementById('helpModal');
+
+    if (event && event.target === modal) {
+        modal.classList.remove('show');
+    } else {
+        modal.classList.toggle('show');
+    }
+}
