@@ -1057,7 +1057,7 @@ header {
 }
 
 .helpModalContent {
-    width: 400px;
+    width: 345px;
     max-width: 90%;
     max-height: 500px;
     background-color: var(--secondary-color);
@@ -1087,8 +1087,8 @@ header {
 .closeHelpModal {
     width: 30px;
     height: 30px;
-    background-color: var(--primary-color);
-    color: var(--text-color);
+    background-color: transparent;
+    color: var(--primary-color);
     border-radius: 50%;
     display: flex;
     justify-content: center;

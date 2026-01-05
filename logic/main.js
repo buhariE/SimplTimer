@@ -25,6 +25,25 @@ let min = -(2*translateXvalue);
 
 // plaecholder time zone values
 const timeZones = {
+    "Africa/Accra": "Ghana Standard Time",
+    "Africa/Cairo":"Egypt Standard Time",
+    "Africa/Johannesburg":"South-Africa Standard Time",
+    "Asia/Dubai": "Gulf Standard Time",
+    "Asia/Kolkata": "India Standard Time",
+    "Asia/Dhaka": "Bangladesh Time",
+    "Asia/Colombo": "Sri Lanka Time",
+    "Asia/Bangkok": "Indochina Time",
+    "Asia/Shanghai": "China Standard Time",
+    "Asia/Tokyo": "Japan Standard Time",
+    "Asia/Seoul": "Korea Standard Time",
+    "Asia/Singapore": "Singapore Time",
+    "Australia/Sydney": "Australian Eastern Time",
+    "Australia/Adelaide": "Australian Central Time",
+    "Australia/Perth": "Australian Western Time",
+    "Pacific/Auckland": "New Zealand Time",
+    "Pacific/Fiji": "Fiji Time",
+    "Pacific/Tongatapu": "Tonga Time",
+    "America/Edmonton": "Mountain Time (Calgary, Edmonton)",
     "America/New_York": "Eastern Time (US & Canada)",
     "America/Chicago": "Central Time (US & Canada)",
     "America/Denver": "Mountain Time (US & Canada)",
@@ -48,22 +67,6 @@ const timeZones = {
     "Europe/Stockholm": "CET (Sweden)",
     "Europe/Istanbul": "Turkey Time",
     "Europe/Moscow": "Moscow Time",
-    "Asia/Dubai": "Gulf Standard Time",
-    "Asia/Kolkata": "India Standard Time",
-    "Asia/Dhaka": "Bangladesh Time",
-    "Asia/Colombo": "Sri Lanka Time",
-    "Asia/Bangkok": "Indochina Time",
-    "Asia/Shanghai": "China Standard Time",
-    "Asia/Tokyo": "Japan Standard Time",
-    "Asia/Seoul": "Korea Standard Time",
-    "Asia/Singapore": "Singapore Time",
-    "Australia/Sydney": "Australian Eastern Time",
-    "Australia/Adelaide": "Australian Central Time",
-    "Australia/Perth": "Australian Western Time",
-    "Pacific/Auckland": "New Zealand Time",
-    "Pacific/Fiji": "Fiji Time",
-    "Pacific/Tongatapu": "Tonga Time",
-    "America/Edmonton": "Mountain Time (Calgary, Edmonton)"
 };
 
 // functions
@@ -88,6 +91,7 @@ function toggleTheme() {
         document.documentElement.style.setProperty('--accent-color2', '#00311Fff');
     }
 }
+
 function toggleFormat() {
     if (hourFormat === '12H') {
         hourFormat = '24H';
@@ -353,6 +357,11 @@ function resetTime(timeArr){
     timeArr.forEach((timeElement)=>{
         timeElement.innerText = '00';
     });
+    if(intervalIdCtDwn){
+        clearInterval(intervalIdCtDwn);
+        timerSideButtons[1].classList.remove('stop');
+        timerSideButtons[1].innerHTML = '<i class="fa-solid fa-play"></i>';
+    }
     enableTimerPlaySideButtons();
 }
 
