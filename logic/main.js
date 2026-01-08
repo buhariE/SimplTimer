@@ -10,6 +10,9 @@ const timezoneDropDopdownContent = document.querySelector('.timezoneBackDrop');
 const timezoneDropDopdownClose = document.querySelector('.closeBtn');
 const menuItems = document.querySelectorAll('.menuItem');
 
+const dialog = document.getElementById('notificationDialog');
+const audio = new Audio('./resources/level-up-191997.mp3');
+
 const timerSideButtons = document.querySelectorAll('.timerSideButtons div');
 
 const searchInput = document.getElementById('tzSearch');
@@ -140,6 +143,10 @@ function intify(string){
     return string.replaceAll(' ', '') === null?string:string.replaceAll(' ', '');
 }
 
+function reformat11(text){
+    return text === '1 1'?11:text;
+}
+
 function display11(text){
     return text == 11?'1 1':text;
 }
@@ -167,7 +174,7 @@ function displayTime(){
     if(hourFormat === '12H'){
         ampm = hours >= 12 ? ' PM' : ' AM';
         hours = hours % 12;
-        hours = hours < 12 ? `0${hours}`:hours;
+        hours = hours < 10 ? `0${hours}`:hours;
         hours = hours ? hours : 12; // the hour '0' should be '12'
     } else {
         ampm = 'HRS';
@@ -188,63 +195,66 @@ function displayTime(){
 
 displayTime();
 
-function incrementTime(type){
-    switch(type){
-        case 'hours':
-            incrementTimeDisplay(0,23,document.querySelector('.timerHours .value .digits'));
-            break;
-        case 'minutes':
-            incrementTimeDisplay(0,59,document.querySelector('.timerMinutes .value .digits'));
-            break;
-        case 'seconds':
-            incrementTimeDisplay(0,59,document.querySelector('.timerSeconds .value .digits'));
-            break;
+function validateTimerInput(maxvalue,minvalue,value){
+    if(value>=maxvalue){
+        return minvalue;
+    } else if(value<minvalue) {
+        return maxvalue-1;
+    }
+    return value;
+}
+
+function displayDD(num){
+    if(num < 10){
+        return `0${num}`;
+    } else if(num == 11){
+        return '1 1';
+    } return num;
+}
+function displayDW(word){
+    if(word == '11'){
+        return '1 1';
+    } else if(word === '60'){
+        return '59';
+    } return word;
+}
+
+function incrementTime(max,min,parentClass,successorClass){
+    const textfield = document.querySelector(`.${parentClass} .value input[type="text"]`);
+    const successor = document.querySelector(`.${successorClass} .value input[type="text"]`);
+
+    let reValue = reformat11(textfield.value);
+    textfield.value = displayDD(validateTimerInput(max,min,++reValue));
+    if(successor){
+        let temp = parseInt(reformat11(successor.value));
+        successor.value = '';
+        successor.value = reValue >= max?displayDD(temp+1):displayDD(temp);
+        successor.value = successor.value === `${max}`?'00':successor.value;
+        console.log(successor.value);
     }
     enableTimerPlaySideButtons();
 }
-function decrementTime(type){
-    switch(type){
-        case 'hours':
-            decrementTimeDisplay(0,23,document.querySelector('.timerHours .value .digits'));
-            break;
-        case 'minutes':
-            decrementTimeDisplay(0,59,document.querySelector('.timerMinutes .value .digits'));
-            break;
-        case 'seconds':
-            decrementTimeDisplay(0,59,document.querySelector('.timerSeconds .value .digits'));
-            break;
+function decrementTime(max,min,parentClass,successorClass){
+    const textfield = document.querySelector(`.${parentClass} .value input[type="text"]`);
+    const successor = document.querySelector(`.${successorClass} .value input[type="text"]`);
+    
+    let reValue = reformat11(textfield.value);
+    textfield.value = displayDD(validateTimerInput(max,min,--reValue));
+    if(successor){
+        let temp = parseInt(reformat11(successor.value));
+        successor.value = '';
+        successor.value = reValue <= min?displayDD(temp-1):displayDD(temp);
+        successor.value = successor.value === '0-1'?'00':successor.value;
+        console.log(successor.value);
     }
     enableTimerPlaySideButtons();
-}
-
-function incrementTimeDisplay(min,max,element){
-    let value = parseInt(intify(element.innerText));
-    if(value < max){
-        value += 1;
-        console.log(value);
-    } else {
-        value = max;
-    }
-
-    element.innerText = value < 10 ? '0' + value:display11(value);
-}
-
-function decrementTimeDisplay(min,max,element){
-    let value = parseInt(intify(element.innerText));
-    if(value > min){
-        value -= 1;
-    } else {
-        value = min;
-    }
-
-    element.innerText = value < 10 ? '0' + value:display11(value);
 }
 
 function enableTimerPlaySideButtons(){
 
-    let hrsStr= intify(document.querySelector('.timerHours .value .digits').innerText);
-    let minStr = intify(document.querySelector('.timerMinutes .value .digits').innerText);
-    let secsStr = intify(document.querySelector('.timerSeconds .value .digits').innerText);
+    let hrsStr= intify(document.querySelector('.timerHours .value .digits').value);
+    let minStr = intify(document.querySelector('.timerMinutes .value .digits').value);
+    let secsStr = intify(document.querySelector('.timerSeconds .value .digits').value);
 
     let timeArray = [
                      document.querySelector('.timerHours .value .digits'),
@@ -317,22 +327,19 @@ function countDown(){
 
     }
 
-
-
-
 }
 
 
 function countDownTime(min,secs,max,mins,hrs,id,fallbackf){
 
-    let seconds  = parseInt(intify(secs.innerText));
-    let minutes = parseInt(intify(mins.innerText));
-    let hours = parseInt(intify(hrs.innerText));
+    let seconds  = parseInt(intify(secs.value));
+    let minutes = parseInt(intify(mins.value));
+    let hours = parseInt(intify(hrs.value));
 
     // count down for seconds when greater than zero
     if(seconds > min){
         seconds -=1;
-        secs.innerText =seconds < 10?'0'+seconds:display11(seconds);
+        secs.value =seconds < 10?'0'+seconds:display11(seconds);
     } else { // count down for seconds when less than zero
 
         if(minutes > 0){ // check minutes
@@ -351,13 +358,14 @@ function countDownTime(min,secs,max,mins,hrs,id,fallbackf){
                 'Timer done :)',
                 'moodDanger'
             )
+            showDialog('Timer complete !');
         }
         // update DOM element.
-        hrs.innerText = hours < 10?'0'+hours:display11(hours);
+        hrs.value = hours < 10?'0'+hours:display11(hours);
 
-        mins.innerText = minutes < 10 ? '0'+minutes:display11(minutes);
+        mins.value = minutes < 10 ? '0'+minutes:display11(minutes);
 
-        secs.innerText =seconds < 10?'0'+seconds:display11(seconds);
+        secs.value =seconds < 10?'0'+seconds:display11(seconds);
 
     }
 }
@@ -365,7 +373,7 @@ function countDownTime(min,secs,max,mins,hrs,id,fallbackf){
 
 function resetTime(timeArr){
     timeArr.forEach((timeElement)=>{
-        timeElement.innerText = '00';
+        timeElement.value = '00';
     });
     if(intervalIdCtDwn){
         clearInterval(intervalIdCtDwn);
@@ -386,7 +394,7 @@ function addPresetTimer(){
         const m = document.querySelector('.timerMinutes .value .digits');
         const s = document.querySelector('.timerSeconds .value .digits');
 
-        presetTime = `${h.innerText}:${m.innerText}:${s.innerText}`;
+        presetTime = `${h.value}:${m.value}:${s.value}`;
         if(!presetTimes.includes(presetTime,0)){
 
             presetTimes.push(presetTime);
@@ -489,9 +497,9 @@ function loadPreset(presetDiv){
 
     if(!presetDiv.classList.contains('empty')){
         let time = presetDiv.innerText.split(':');
-        h.innerText = time[0];
-        m.innerText = time[1];
-        s.innerText = time[2];
+        h.value = time[0];
+        m.value = time[1];
+        s.value = time[2];
         enableTimerPlaySideButtons();
     }
 
@@ -529,6 +537,20 @@ document.addEventListener(
         );
         // const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         document.querySelector('.timezoneValue').innerText = timeZoneFormat;
+
+        document.querySelectorAll('.digits').forEach((input)=>{
+            input.addEventListener('input', function () {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                this.value = displayDW(this.value);
+                enableTimerPlaySideButtons();
+            });
+
+            input.addEventListener('blur', function () {
+                this.value = this.value.length < 2?`0${this.value}`:this.value;
+            });
+        });
+        
+        
     }
 );
 
@@ -1089,4 +1111,24 @@ function toggleHelpModal(event) {
     } else {
         modal.classList.toggle('show');
     }
+}
+
+function showDialog(message=''){
+     dialog.showModal();
+     dialog.querySelector('.dialogMessage .messageText').innerText = message;
+     playAudio();
+}
+
+function closeDialog(){
+     dialog.close();
+     stopAudio();
+}
+
+function playAudio(){
+    audio.loop = 'true';
+    audio.play();
+}
+
+function stopAudio(){
+    audio.loop = false;
 }

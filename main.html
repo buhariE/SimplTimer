@@ -15,7 +15,7 @@
         <button class="helpButton" onclick="showKeyboardHelp()" title="Keyboard Shortcuts">
             <i class="fa-solid fa-keyboard"></i>
         </button>
-        <button class="themeToggleWrapper" onclick="toggleTheme()">
+        <button class="themeToggleWrapper" onclick="toggleTheme()" title="Toggle theme">
             <i class="fa-solid fa-moon"></i>
             <i class="fa-solid fa-sun"></i>
             <div class="themeToggleCircle">
@@ -95,40 +95,45 @@
                     <div class="cardBody">
                         <div class="timerWrapper">
                             <div class="timerHours">
-                                <div class="increment" onclick="incrementTime('hours')">
+                                <div class="increment" onclick="incrementTime(24,0,'timerHours')">
                                     <i class="fa-solid fa-chevron-up"></i>
                                 </div>
 
                                 <div class="value">
-                                    <span class="digits">00</span>
-                                    <span class="label">H</span>
+                                    <!-- <span class="digits">00</span>
+                                    <span class="label">H</span> -->
+                                    <input type="text" value="00" name="hours" id="hours" class="digits" placeholder="00" maxlength="2" list="none">
+                                    <label for="seconds">H</span>
                                 </div>
-                                <div class="decrement" onclick="decrementTime('hours')">
+                                <div class="decrement" onclick="decrementTime(24,0,'timerHours')">
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </div>
                             </div>
                             <div class="timerSeparator">:</div>
                             <div class="timerMinutes">
-                                <div class="increment" onclick="incrementTime('minutes')">
+                                <div class="increment" onclick="incrementTime(60,0,'timerMinutes','timerHours')">
                                     <i class="fa-solid fa-chevron-up"></i>
                                 </div>
                                 <div class="value">
-                                    <span class="digits">00</span>
-                                    <span class="label">M</span>
+                                    <!-- <span class="digits">00</span> -->
+                                    <!-- <span class="label">M</span> -->
+                                    <input type="text" value="00" name="minutes" id="minutes" class="digits" placeholder="00" maxlength="2">
+                                    <label for="minutes">M</span>
                                 </div>
-                                <div class="decrement" onclick="decrementTime('minutes')">
+                                <div class="decrement" onclick="decrementTime(60,0,'timerMinutes','timerHours')">
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </div>
                             </div>
                             <div class="timerSeconds">
-                                <div class="increment" onclick="incrementTime('seconds')">
+                                <div class="increment" onclick="incrementTime(60,0,'timerSeconds','timerMinutes')">
                                     <i class="fa-solid fa-chevron-up"></i>
                                 </div>
                                 <div class="value">
-                                    <span class="digits">00</span>
-                                    <span class="label">S</span>
+                                    <!-- <span class="digits">00</span> -->
+                                    <input type="text" value="00" name="seconds" id="seconds" class="digits" placeholder="00" maxlength="2">
+                                    <label for="seconds">S</span>
                                 </div>
-                                <div class="decrement" onclick="decrementTime('seconds')">
+                                <div class="decrement" onclick="decrementTime(60,0,'timerSeconds','timerMinutes')">
                                     <i class="fa-solid fa-chevron-down"></i>
                                 </div>
                             </div>
@@ -270,6 +275,17 @@
             </div>
         </div>
     </div>
+    <dialog id="notificationDialog">
+        <div class="dialogMessage">
+            <div class="messageText">
+                Dafault text.
+            </div>
+            <button class="closeDialog" onclick="closeDialog()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </dialog>
 </body>
 <script src="logic/main.js"></script>
 </html>
+<!-- Sound Effect by <a href="https://pixabay.com/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=191997">Universfield</a> from <a href="https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=191997">Pixabay</a> -->
