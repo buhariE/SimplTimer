@@ -1035,13 +1035,13 @@ function handleArrowKey(direction) {
     highlightTimerUnit(timerFocusIndex);
 
     if (direction === 'up') {
-        if (timerFocusIndex === 0) incrementTime('hours');
-        else if (timerFocusIndex === 1) incrementTime('minutes');
-        else incrementTime('seconds');
+        if (timerFocusIndex === 0) incrementTime(24,0,'timerHours');
+        else if (timerFocusIndex === 1) incrementTime(60,0,'timerMinutes','timerHours');
+        else incrementTime(60,0,'timerMinutes','timerHours');
     } else {
-        if (timerFocusIndex === 0) decrementTime('hours');
-        else if (timerFocusIndex === 1) decrementTime('minutes');
-        else decrementTime('seconds');
+        if (timerFocusIndex === 0) decrementTime(24,0,'timerHours');
+        else if (timerFocusIndex === 1) decrementTime(60,0,'timerMinutes','timerHours');
+        else decrementTime(60,0,'timerMinutes','timerHours');
     }
 }
 

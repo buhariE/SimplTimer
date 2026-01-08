@@ -553,10 +553,22 @@ main {
     cursor: pointer;
     opacity: 0.2;
     font-size: 0.6em;
-
+    
     background-color: var(--primary-color);
     color: var(--secondary-color);
+    
+    display:none;
 }
+
+.timerHours:hover .increment,
+.timerHours:hover .decrement,
+.timerMinutes:hover .increment,
+.timerMinutes:hover .decrement,
+.timerSeconds:hover .increment,
+.timerSeconds:hover .decrement {
+    display:flex;
+}   
+
 
 /* .increment {
     border-bottom: 0.5px solid #a7a7a7;
