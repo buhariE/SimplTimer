@@ -174,8 +174,8 @@ function displayTime(){
     if(hourFormat === '12H'){
         ampm = hours >= 12 ? ' PM' : ' AM';
         hours = hours % 12;
-        hours = hours < 10 ? `0${hours}`:hours;
         hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = hours < 10 ? `0${hours}`:hours;
     } else {
         ampm = 'HRS';
     }
