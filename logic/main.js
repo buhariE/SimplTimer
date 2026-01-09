@@ -11,7 +11,7 @@ const timezoneDropDopdownClose = document.querySelector('.closeBtn');
 const menuItems = document.querySelectorAll('.menuItem');
 
 const dialog = document.getElementById('notificationDialog');
-const audio = new Audio('./resources/level-up-191997.mp3');
+const audio = new Audio('./resources/audio/alarm.mp3');
 
 const timerSideButtons = document.querySelectorAll('.timerSideButtons div');
 
@@ -236,8 +236,8 @@ function incrementTime(max,min,parentClass,successorClass){
 }
 function decrementTime(max,min,parentClass,successorClass){
     const textfield = document.querySelector(`.${parentClass} .value input[type="text"]`);
-    const successor = document.querySelector(`.${successorClass} .value input[type="text"]`);
-    
+	const successor = document.querySelector(`.${successorClass} .value input[type="text"]`);
+
     let reValue = reformat11(textfield.value);
     textfield.value = displayDD(validateTimerInput(max,min,--reValue));
     if(successor){
@@ -353,12 +353,6 @@ function countDownTime(min,secs,max,mins,hrs,id,fallbackf){
             clearInterval(intervalIdCtDwn);
             fallbackf();
             alarm();
-            showNotification(
-                '<i class="fa-solid fa-bell"></i>',
-                'Timer done :)',
-                'moodDanger'
-            )
-            showDialog('Timer complete !');
         }
         // update DOM element.
         hrs.value = hours < 10?'0'+hours:display11(hours);
@@ -421,26 +415,9 @@ function addPresetTimer(){
     }
 }
 
-function showNotification(icon,message,mood){
-    const popup = document.querySelector('.interactivePops');
-    popup.querySelector('.icon').innerHTML = icon;
-    popup.querySelector('.content').innerHTML = message;
-    if(mood){
-        popup.classList.remove('default');
-        popup.classList.add(mood);
-    }
-    popup.classList.remove('hide');
 
-    setTimeout(()=>{hideNotification(mood)},3000);
-}
 
-function hideNotification(mood){
-    const popup = document.querySelector('.interactivePops');
-    popup.querySelector('.icon').innerHTML = '<i class="fa-solid fa-bell"></i>';
-    popup.querySelector('.content').innerHTML = 'Message: Hello world !';
-    popup.classList.remove(mood);
-    popup.classList.add('hide');
-}
+
 
 
 function dblClickPreset(presetDiv,index){
@@ -507,13 +484,13 @@ function loadPreset(presetDiv){
 
 function alarm(){
     startpulsingNotification();
+    playAudio();
+    showDialog('Timer Completed!');
 }
 
 function startpulsingNotification(){
     const pulserWrap = document.querySelector('.cardContentWrapper');
     pulserWrap.classList.add('cardContentWrapperNotification');
-
-    setTimeout(stopPulsingNotification,5000);
 }
 
 function stopPulsingNotification(){
@@ -549,8 +526,8 @@ document.addEventListener(
                 this.value = this.value.length < 2?`0${this.value}`:this.value;
             });
         });
-        
-        
+
+
     }
 );
 
@@ -1122,13 +1099,20 @@ function showDialog(message=''){
 function closeDialog(){
      dialog.close();
      stopAudio();
+     stopPulsingNotification();
 }
 
-function playAudio(){
-    audio.loop = 'true';
-    audio.play();
+async function playAudio(){
+    audio.loop = true;
+    try {
+        await audio.play();
+    } catch (err) {
+        console.error('Failed to play audio:', err);
+    }
 }
 
 function stopAudio(){
+    audio.pause();
+    audio.currentTime = 0;
     audio.loop = false;
 }

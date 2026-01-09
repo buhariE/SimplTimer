@@ -553,10 +553,10 @@ main {
     cursor: pointer;
     opacity: 0.2;
     font-size: 0.6em;
-    
+
     background-color: var(--primary-color);
     color: var(--secondary-color);
-    
+
     display:none;
 }
 
@@ -567,7 +567,7 @@ main {
 .timerSeconds:hover .increment,
 .timerSeconds:hover .decrement {
     display:flex;
-}   
+}
 
 
 /* .increment {
@@ -969,32 +969,6 @@ main {
     font-size: 0.75em;
 }
 
-.interactivePops {
-    width: 345px;
-    height: 35px;
-    border-radius:30px;
-    color:var(--primary-color);
-
-    position: absolute;
-    transform: translateY(-165px);
-
-    display: grid;
-    grid-template-columns: 1fr 8fr;
-    align-items: center;
-
-
-}
-
-.interactivePops .icon {
-    font-size:0.85em;
-    justify-self: center;
-}
-
-.interactivePops .content {
-    font-size: 0.7em;
-    font-weight: bold;
-
-}
 
 .moodSuccess {
     background-color: var(--accent-color2);
@@ -1179,7 +1153,7 @@ dialog#notificationDialog {
 
     border:none;
 
-    
+
 
     background-color: var(--secondary-color);
     color: var(--primary-color);
