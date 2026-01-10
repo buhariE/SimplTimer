@@ -520,6 +520,7 @@ main {
 .timerHours .value .digits, .timerMinutes .value .digits {
     width: 45px;
     font-size:45px;
+    line-height: 46px;
     font-family: 'Digital-7', monospace;
     background-color: transparent;
     border: none;
@@ -529,6 +530,7 @@ main {
 
 .timerSeconds .value .digits {
     font-size:30px;
+    line-height: 31px;
     font-family: 'Digital-7', monospace;
     width:30px;
     border: none;
@@ -970,6 +972,33 @@ main {
 }
 .menuItem div {
     font-size: 0.75em;
+}
+
+.interactivePops {
+    width: 345px;
+    height: 35px;
+    border-radius:30px;
+    color:var(--primary-color);
+
+    position: absolute;
+    transform: translateY(-165px);
+
+    display: grid;
+    grid-template-columns: 1fr 8fr;
+    align-items: center;
+
+
+}
+
+.interactivePops .icon {
+    font-size:0.85em;
+    justify-self: center;
+}
+
+.interactivePops .content {
+    font-size: 0.7em;
+    font-weight: bold;
+
 }
 
 

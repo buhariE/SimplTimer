@@ -417,6 +417,26 @@ function addPresetTimer(){
 
 
 
+function showNotification(icon,message,mood){
+    const popup = document.querySelector('.interactivePops');
+    popup.querySelector('.icon').innerHTML = icon;
+    popup.querySelector('.content').innerHTML = message;
+    if(mood){
+        popup.classList.remove('default');
+        popup.classList.add(mood);
+    }
+    popup.classList.remove('hide');
+
+    setTimeout(()=>{hideNotification(mood)},3000);
+}
+
+function hideNotification(mood){
+    const popup = document.querySelector('.interactivePops');
+    popup.querySelector('.icon').innerHTML = '<i class="fa-solid fa-bell"></i>';
+    popup.querySelector('.content').innerHTML = 'Message: Hello world !';
+    popup.classList.remove(mood);
+    popup.classList.add('hide');
+}
 
 
 
@@ -590,7 +610,7 @@ function displayHitItems(items,value) {
     }
 
     const ranges = [];
-    
+
     for (let item of items) {
         const listDiv = document.createElement('div');
         listDiv.classList.add('tzDDCListItem');
