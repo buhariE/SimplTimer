@@ -15,7 +15,10 @@ button {
     --accent-color1: #0078DB;
     --accent-color2: #00311F;
 }
-
+::highlight(search-highlight) {
+  background-color: yellow;
+  color: black;
+}
 body {
     margin: 0;
     padding: 0;

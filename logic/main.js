@@ -534,14 +534,14 @@ document.addEventListener(
 const example = ["value","check","word","manifold","manifest","manieuse"]
 
 function search(){
-    let value = searchInput.value;
+    let value = searchInput.value.toLowerCase();
     searchArray(value,Object.values(timeZones));
 }
 
 function searchArray(value,object){
     let result = [];
     result = object.filter((word)=>(value.length >= 1 & word.toLowerCase().includes(value)));
-    console.log(result);
+    // console.log(result);
     showResults(value,result);
 
 }
@@ -552,18 +552,18 @@ function showResults(value,result){
     } else if(result.length === 0) {
         displayEmptyItem(value);
     } else {
-        displayHitItems(result);
+        displayHitItems(result,value);
     }
 }
 
 function displayItems(items){
     clearList();
     const label = document.querySelector('.timezoneValue');
+    const wrappers = document.querySelector('.tzDDCList');
     for(let item of items){
-        const wrappers = document.querySelector('.tzDDCList');
         const listDiv = document.createElement('div');
         listDiv.classList.add('tzDDCListItem');
-        listDiv.classList.add('defaultItem');
+        // listDiv.classList.add('defaultItem');
         let newValue = Object.keys(timeZones).find(key => timeZones[key] === item);
         listDiv.addEventListener('click', () =>{
             itemEvent(newValue)
@@ -579,11 +579,19 @@ function displayItems(items){
     }
 }
 
-function displayHitItems(items) {
+function displayHitItems(items,value) {
+    
     clearList();
     const label = document.querySelector('.timezoneValue');
+    const wrappers = document.querySelector('.tzDDCList');
+
+    if ('highlights' in CSS) {
+        CSS.highlights.delete('search-highlight');
+    }
+
+    const ranges = [];
+    
     for (let item of items) {
-        const wrappers = document.querySelector('.tzDDCList');
         const listDiv = document.createElement('div');
         listDiv.classList.add('tzDDCListItem');
         listDiv.classList.add('hitItem');
@@ -600,6 +608,33 @@ function displayHitItems(items) {
         }
         listDiv.innerText = item;
         wrappers.appendChild(listDiv);
+
+        // let start = item.toLocaleLowerCase().indexOf(value,0);
+        // let end = start + value.length;
+
+        // console.log(`range: ${start} to ${end}`,);
+
+        // range.setStart(listDiv,start);
+        // range.setEnd(listDiv,end);
+
+        // const highlight = new Highlight(range);
+
+        // CSS.highlights.set("user-1-highlight",highlight);
+        if (value && item.toLowerCase().includes(value.toLowerCase())) {
+            const textNode = listDiv.firstChild;
+            const start = item.toLowerCase().indexOf(value.toLowerCase());
+            const end = start + value.length;
+
+            const range = new Range();
+            range.setStart(textNode, start);
+            range.setEnd(textNode, end);
+            ranges.push(range);
+        }
+
+    }
+    if (ranges.length > 0 && 'highlights' in CSS) {
+        const highlight = new Highlight(...ranges);
+        CSS.highlights.set('search-highlight', highlight);
     }
 }
 
