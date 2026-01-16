@@ -19,9 +19,37 @@ const searchInput = document.getElementById('tzSearch');
 
 
 // init global variables
+// local storage for user preferences
 let theme = 'dark';
 let hourFormat = '12H';
 let timeZoneFormat = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+// check if browser supports localStorage
+    // if data exist in LS, retrieve else do nothing
+window.addEventListener('load',()=>{
+    if(typeof Storage !== 'undefined'){
+        if(localStorage.length !== 0){
+            theme = localStorage.getItem('theme');
+            hourFormat = localStorage.getItem('hourFormat');
+            timeZoneFormat = localStorage.getItem('timeZoneFormat');
+            const label = document.querySelector('.timezoneValue');
+            label.innerText = timeZoneFormat;
+            displayTime();
+            loadTheme(theme);
+            loadHrFormat(hourFormat);
+
+            loadSeshPresets();
+            insertPresetDOM();
+            
+        } else {
+            localStorage.setItem('theme','dark');
+            localStorage.setItem('hourFormat','12H');
+            localStorage.setItem('timeZoneFormat',Intl.DateTimeFormat().resolvedOptions().timeZone);
+        }
+        console.log(localStorage.length);
+    }
+});
+
 const translateXvalue = 345;
 let contentCardMovement = 0;
 let max = 0;
@@ -75,37 +103,65 @@ const timeZones = {
 };
 
 // functions
+function loadTheme(themeValue){
+    switch (themeValue) {
+        case 'light':
+            themeToggleCircle.style.transform = 'translateX(24px)';
+            themeToggleCircle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            document.documentElement.style.setProperty('--primary-color', '#f0f0f0');
+            document.documentElement.style.setProperty('--secondary-color', '#4a4a4a');
+            document.documentElement.style.setProperty('--text-color', '#323232ff');
+            document.documentElement.style.setProperty('--accent-color1', '#2a8ad8ff');
+            document.documentElement.style.setProperty('--accent-color2', '#064d33ff');
+            break;
+        case 'dark':
+            themeToggleCircle.style.transform = 'translateX(0px)';
+            themeToggleCircle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            document.documentElement.style.setProperty('--primary-color', '#2b2b2b');
+            document.documentElement.style.setProperty('--secondary-color', '#d9d9d9');
+            document.documentElement.style.setProperty('--text-color', '#ffffff');
+            document.documentElement.style.setProperty('--accent-color1', '#0078DBff');
+            document.documentElement.style.setProperty('--accent-color2', '#00311Fff'); 
+            break;
+        default:
+            break;
+    }
+}
 function toggleTheme() {
     if (theme === 'dark') {
         theme = 'light';
-        themeToggleCircle.style.transform = 'translateX(24px)';
-        themeToggleCircle.innerHTML = '<i class="fa-solid fa-sun"></i>';
-        document.documentElement.style.setProperty('--primary-color', '#f0f0f0');
-        document.documentElement.style.setProperty('--secondary-color', '#4a4a4a');
-        document.documentElement.style.setProperty('--text-color', '#323232ff');
-        document.documentElement.style.setProperty('--accent-color1', '#2a8ad8ff');
-        document.documentElement.style.setProperty('--accent-color2', '#064d33ff');
+        loadTheme(theme);
+        localStorage.setItem('theme',theme);
     } else {
         theme = 'dark';
-        themeToggleCircle.style.transform = 'translateX(0px)';
-        themeToggleCircle.innerHTML = '<i class="fa-solid fa-moon"></i>';
-        document.documentElement.style.setProperty('--primary-color', '#2b2b2b');
-        document.documentElement.style.setProperty('--secondary-color', '#d9d9d9');
-        document.documentElement.style.setProperty('--text-color', '#ffffff');
-        document.documentElement.style.setProperty('--accent-color1', '#0078DBff');
-        document.documentElement.style.setProperty('--accent-color2', '#00311Fff');
+        loadTheme(theme);
+        localStorage.setItem('theme',theme);
     }
 }
 
+function loadHrFormat(formatValue){
+    switch (formatValue) {
+        case '12H':
+            hourToggleCircle.style.transform = 'translateX(0px)';
+            hourToggleCircle.innerHTML = '12H';
+            break;
+        case '24H':
+            hourToggleCircle.style.transform = 'translateX(23px)';
+            hourToggleCircle.innerHTML = '24H';
+            break;
+        default:
+            break;
+    }
+}
 function toggleFormat() {
     if (hourFormat === '12H') {
         hourFormat = '24H';
-        hourToggleCircle.style.transform = 'translateX(23px)';
-        hourToggleCircle.innerHTML = '24H';
+        loadHrFormat(hourFormat);
+        localStorage.setItem('hourFormat',hourFormat);
     } else {
         hourFormat = '12H';
-        hourToggleCircle.style.transform = 'translateX(0px)';
-        hourToggleCircle.innerHTML = '12H';
+        loadHrFormat(hourFormat);
+        localStorage.setItem('hourFormat',hourFormat);
     }
 }
 
@@ -413,9 +469,39 @@ function addPresetTimer(){
             'moodWarning'
            );
     }
+    storePresets();
 }
 
+function storePresets(){
+    if(presetTimes.length>0){
+        let presetsAsStr = presetTimes.join(',');
+        sessionStorage.setItem('presets',presetsAsStr);
+    }
+    console.log(sessionStorage.getItem('presets'));
+}
 
+function loadSeshPresets(){
+    if(sessionStorage.length>0){
+        let presetsAsStr = sessionStorage.getItem('presets');
+        presetTimes = presetsAsStr.split(',');
+    }
+    console.log(sessionStorage.getItem('presets'),presetTimes);
+}
+
+function insertPresetDOM(){
+    const customTimerEmpty = document.querySelectorAll('.customTimersWrappers .empty');
+    presetTimes.forEach((presetTime,idx)=>{
+        const span = document.createElement('span');
+        span.innerText = presetTime;
+        customTimerEmpty[idx].appendChild(span);
+        customTimerEmpty[idx].classList.remove('empty');
+    });
+    showNotification(
+            '<i class="fa-solid fa-circle-info"></i>',
+            `Loaded ${presetTimes.length} Presets`,
+            'moodWarning'
+           );
+}
 
 function showNotification(icon,message,mood){
     const popup = document.querySelector('.interactivePops');
@@ -629,17 +715,6 @@ function displayHitItems(items,value) {
         listDiv.innerText = item;
         wrappers.appendChild(listDiv);
 
-        // let start = item.toLocaleLowerCase().indexOf(value,0);
-        // let end = start + value.length;
-
-        // console.log(`range: ${start} to ${end}`,);
-
-        // range.setStart(listDiv,start);
-        // range.setEnd(listDiv,end);
-
-        // const highlight = new Highlight(range);
-
-        // CSS.highlights.set("user-1-highlight",highlight);
         if (value && item.toLowerCase().includes(value.toLowerCase())) {
             const textNode = listDiv.firstChild;
             const start = item.toLowerCase().indexOf(value.toLowerCase());
@@ -675,6 +750,7 @@ function itemEvent(newValue){
     closeBackDrop();
     showNotification('<i class="fa-solid fa-globe"></i>',`Time-zone: ${newValue}`,'moodSuccess');
     timeZoneFormat = newValue;
+    localStorage.setItem('timeZoneFormat',timeZoneFormat);
 }
 
 // Stopwatch Functions
