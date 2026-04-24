@@ -1729,3 +1729,226 @@ dialog#notificationDialog {
     opacity: 0.12;
     pointer-events: none;
 }
+
+/* ============================================================
+   ADD CLOCK BUTTONS (on main widget edges)
+   ============================================================ */
+
+.addClockBtns {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.addClockBtn {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7em;
+    cursor: pointer;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+    color: var(--text-color);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+[data-theme="dark"] .addClockBtn {
+    background: rgba(3, 83, 164, 0.55);
+    border: 1px solid rgba(185, 214, 242, 0.3);
+}
+
+[data-theme="light"] .addClockBtn {
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(3, 83, 164, 0.25);
+    color: var(--accent-color1);
+}
+
+.addClockBtn--top  { top: -14px; left: 50%; transform: translateX(-50%); }
+/* 14px drag handle + 6px gap + half of 185px card = 112.5px — centers on the card, not the full widget */
+.addClockBtn--left  { left: -42px;  top: 112.5px; transform: translateY(-50%); }
+.addClockBtn--right { right: -42px; top: 112.5px; transform: translateY(-50%); }
+
+/* .widget-hovered is set by JS (not CSS :hover) so buttons outside the widget
+   bounding box can still receive pointer events without breaking on mouseleave */
+#widgetWrapper.worldClockActive.widget-hovered .addClockBtn {
+    opacity: 0.42;
+    pointer-events: auto;
+}
+
+#widgetWrapper.worldClockActive.widget-hovered .addClockBtn--top:hover   { opacity: 1; transform: translateX(-50%) scale(1.18); }
+#widgetWrapper.worldClockActive.widget-hovered .addClockBtn--left:hover  { opacity: 1; transform: translateY(-50%) scale(1.18); }
+#widgetWrapper.worldClockActive.widget-hovered .addClockBtn--right:hover { opacity: 1; transform: translateY(-50%) scale(1.18); }
+
+#widgetWrapper.noMoreClocks .addClockBtn {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* ============================================================
+   EXTRA CLOCK WIDGETS
+   ============================================================ */
+
+.extraClockWidget {
+    position: absolute;
+    width: 265px;
+    z-index: 6;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    border-radius: 16px;
+    transition: left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                top  0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    animation: extraClockIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.extraClockWidget.dragging {
+    transition: none;
+    z-index: 8;
+}
+
+@keyframes extraClockIn {
+    from { opacity: 0; transform: scale(0.82); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+.extraClockWidget.extraClockOut {
+    animation: extraClockOut 0.18s ease forwards;
+}
+
+@keyframes extraClockOut {
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(0.82); }
+}
+
+[data-theme="dark"] .extraClockWidget {
+    background: rgba(0, 53, 89, 0.45);
+    border: 1px solid rgba(185, 214, 242, 0.18);
+    box-shadow: 0 8px 32px rgba(6, 26, 64, 0.5), inset 0 1px 0 rgba(185, 214, 242, 0.1);
+    backdrop-filter: blur(24px) saturate(1.6);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    color: var(--text-color);
+}
+
+[data-theme="light"] .extraClockWidget {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px rgba(3, 83, 164, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(24px) saturate(1.6);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6);
+    color: var(--text-color);
+}
+
+.extraDragHandle {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: grab;
+    opacity: 0.35;
+    font-size: 0.78em;
+    transition: opacity 0.2s ease;
+}
+
+.extraDragHandle:hover { opacity: 0.75; }
+
+.extraClockWidget.dragging .extraDragHandle {
+    cursor: grabbing;
+    opacity: 1;
+}
+
+.extraClockInner {
+    padding: 10px 12px 12px;
+}
+
+.extraClockHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.extraTzBtn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-color);
+    font-size: 0.68em;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.15s;
+    max-width: 164px;
+    overflow: hidden;
+}
+
+.extraTzBtn:hover { opacity: 1; }
+
+.extraTzLabel {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 140px;
+}
+
+.extraClockDismiss {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.75em;
+    color: var(--text-color);
+    opacity: 0.45;
+    cursor: pointer;
+    transition: opacity 0.15s, background 0.15s;
+    flex-shrink: 0;
+}
+
+.extraClockDismiss:hover {
+    opacity: 1;
+    background: rgba(185, 214, 242, 0.18);
+}
+
+/* Scale-down clock digits inside extra widgets */
+.extraClockWidget .worldTimeWrapper { gap: 10px; }
+
+.extraClockWidget .timeHours,
+.extraClockWidget .timeMinutes {
+    width: 44px;
+    height: 44px;
+    font-size: 44px;
+}
+
+.extraClockWidget .timeSeparator {
+    width: 12px;
+    height: 44px;
+    font-size: 28px;
+}
+
+.extraClockWidget .timeSeconds {
+    width: 28px;
+    height: 44px;
+    font-size: 21px;
+}
+
+.extraClockWidget .timePeriod {
+    width: 28px;
+    height: 44px;
+    font-size: 13px;
+}
+
+/* Focus mode: blur extra clocks along with other UI */
+[data-focus="on"] .extraClockWidget {
+    filter: blur(5px);
+    opacity: 0.12;
+    pointer-events: none;
+}

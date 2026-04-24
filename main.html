@@ -40,6 +40,17 @@
             <div class="dragHandle" id="dragHandle">
                 <i class="fa-solid fa-maximize"></i>
             </div>
+            <div class="addClockBtns" id="addClockBtns">
+                <button class="addClockBtn addClockBtn--top" onclick="addClockWidget('top')" title="Add clock above">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button class="addClockBtn addClockBtn--left" onclick="addClockWidget('left')" title="Add clock left">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+                <button class="addClockBtn addClockBtn--right" onclick="addClockWidget('right')" title="Add clock right">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
         <div class="cardContentWrapper">
             <div class="contentCards">
                 <div class="contentCard" id="worldClockCard" onload="displayTime()">

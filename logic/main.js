@@ -99,6 +99,7 @@ function toggleFormat() {
         hourToggleCircle.style.transform = 'translateX(0px)';
         hourToggleCircle.innerHTML = '12H';
     }
+    refreshExtraClockFormats();
 }
 
 function moveCards(index){
@@ -111,6 +112,7 @@ function moveCards(index){
             item.classList.remove('activeMenu');
         }
     });
+    widgetEl.classList.toggle('worldClockActive', index === 0);
 }
 
 function closeBackDrop(){
@@ -630,11 +632,21 @@ function clearList(){
 }
 
 function itemEvent(newValue){
-    const label = document.querySelector('.timezoneValue');
-    label.innerText = newValue;
     closeBackDrop();
     showNotification('<i class="fa-solid fa-globe"></i>',`Time-zone: ${newValue}`,'moodSuccess');
-    timeZoneFormat = newValue;
+
+    if (tzPickerTarget !== null) {
+        const clock = extraClocks.find(c => c.id === tzPickerTarget);
+        if (clock) {
+            clock.tz = newValue;
+            clock.el.querySelector('.extraTzLabel').textContent = newValue;
+            tickExtraClock(clock);
+        }
+        tzPickerTarget = null;
+    } else {
+        document.querySelector('.timezoneValue').innerText = newValue;
+        timeZoneFormat = newValue;
+    }
 }
 
 // Stopwatch Functions
@@ -1142,30 +1154,32 @@ let pointerStartX   = 0, pointerStartY   = 0;
 let widgetStartLeft = 0, widgetStartTop  = 0;
 let widgetCurrentLeft = 0, widgetCurrentTop = 0;
 
-function computeSnapZones() {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+const SNAP_BREAKPOINT = 768; // px — 4×4 grid above this, 3×3 below
 
-    const minX = EDGE_PAD;
-    const midX = Math.round((vw - WIDGET_W) / 2);
-    const maxX = vw - WIDGET_W - EDGE_PAD;
-
-    const minY = HEADER_H;
-    const midY = Math.round((vh - WIDGET_H) / 2);
-    const maxY = vh - WIDGET_H - EDGE_PAD;
-
-    return [
-        { name: 'TL', x: minX, y: minY },
-        { name: 'TC', x: midX, y: minY },
-        { name: 'TR', x: maxX, y: minY },
-        { name: 'ML', x: minX, y: midY },
-        { name: 'MC', x: midX, y: midY },
-        { name: 'MR', x: maxX, y: midY },
-        { name: 'BL', x: minX, y: maxY },
-        { name: 'BC', x: midX, y: maxY },
-        { name: 'BR', x: maxX, y: maxY },
-    ];
+// Shared grid builder — 5-col × 3-row on large screens, 3×3 on small
+// 5 cols: good horizontal coverage with a true centre column
+// 3 rows: keeps vertical spacing ~2× the widget height so things don't feel cramped
+function buildSnapGrid(W, H) {
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const isLarge = vw >= SNAP_BREAKPOINT;
+    const cols = isLarge ? 5 : 3;
+    const rows = 3; // always 3 rows — vertical spacing stays comfortable on any screen
+    const minX = EDGE_PAD,  maxX = vw - W - EDGE_PAD;
+    const minY = HEADER_H,  maxY = vh - H - EDGE_PAD;
+    const zones = [];
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+            zones.push({
+                name: `r${r}c${c}`,
+                x: Math.round(minX + (maxX - minX) * c / (cols - 1)),
+                y: Math.round(minY + (maxY - minY) * r / (rows - 1)),
+            });
+        }
+    }
+    return zones;
 }
+
+function computeSnapZones() { return buildSnapGrid(WIDGET_W, WIDGET_H); }
 
 function nearestSnapZone(x, y) {
     const zones = computeSnapZones();
@@ -1280,11 +1294,13 @@ window.addEventListener('resize', () => {
     snapWidgetTo(nearestSnapZone(widgetCurrentLeft, widgetCurrentTop), true);
 });
 
-// Place widget at center (MC zone) on load
+// Place widget at the snap zone closest to the viewport centre on load
 function initWidgetPosition() {
-    const mc = computeSnapZones().find(z => z.name === 'MC');
-    snapWidgetTo(mc, false);
+    const cx = (window.innerWidth  - WIDGET_W) / 2;
+    const cy = (window.innerHeight - WIDGET_H) / 2;
+    snapWidgetTo(nearestSnapZone(cx, cy), false);
     buildSnapIndicators();
+    widgetEl.classList.add('worldClockActive');
 }
 
 if (document.readyState === 'loading') {
@@ -1292,6 +1308,24 @@ if (document.readyState === 'loading') {
 } else {
     initWidgetPosition();
 }
+
+// Add-clock button hover — buttons are outside the widget bounding box so
+// CSS :hover on widgetWrapper drops before the mouse reaches them.
+// We use a JS class + 80ms grace period to keep pointer-events alive in transit.
+(function setupAddBtnHover() {
+    let hoverTimer = null;
+
+    function enter() { clearTimeout(hoverTimer); widgetEl.classList.add('widget-hovered'); }
+    function leave() { hoverTimer = setTimeout(() => widgetEl.classList.remove('widget-hovered'), 80); }
+
+    widgetEl.addEventListener('mouseenter', enter);
+    widgetEl.addEventListener('mouseleave', leave);
+
+    document.querySelectorAll('.addClockBtn').forEach(btn => {
+        btn.addEventListener('mouseenter', enter);
+        btn.addEventListener('mouseleave', leave);
+    });
+})();
 
 // ============================================================
 // FOCUS MODE
@@ -1308,6 +1342,201 @@ function toggleFocusMode() {
         ? 'fa-solid fa-circle-dot'
         : 'fa-solid fa-bullseye';
 }
+
+// ============================================================
+// EXTRA CLOCK WIDGETS
+// ============================================================
+
+const EXTRA_W  = 265;
+const EXTRA_H  = 106; // inner padding(10) + head row(20) + gap(8) + digits(44) + bottom padding(12) + border(~12)
+const MAX_EXTRA = 3;
+
+let extraClocks    = [];   // [{ id, tz, el, snapLeft, snapTop, intervalId }]
+let tzPickerTarget = null; // null = main widget, number = extra clock id
+
+function computeExtraSnapZones() { return buildSnapGrid(EXTRA_W, EXTRA_H); }
+
+function nearestExtraZone(x, y) {
+    const zones = computeExtraSnapZones();
+    let best = zones[0], minD = Infinity;
+    for (const z of zones) {
+        const d = Math.hypot(x - z.x, y - z.y);
+        if (d < minD) { minD = d; best = z; }
+    }
+    return best;
+}
+
+function snapExtraClockTo(clock, zone, animate) {
+    clock.el.style.transition = animate
+        ? 'left 0.3s cubic-bezier(0.25,0.46,0.45,0.94), top 0.3s cubic-bezier(0.25,0.46,0.45,0.94)'
+        : 'none';
+    clock.el.style.left = zone.x + 'px';
+    clock.el.style.top  = zone.y + 'px';
+    clock.snapLeft = zone.x;
+    clock.snapTop  = zone.y;
+}
+
+function tickExtraClock(clock) {
+    if (!clock.el) return;
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: clock.tz, hour: '2-digit', minute: '2-digit',
+        second: '2-digit', hour12: false
+    });
+    const parts = formatter.format(new Date()).split(':');
+    let h = parts[0], m = parts[1], s = parts[2], period = '';
+    if (hourFormat === '12H') {
+        const hi = parseInt(h);
+        period = hi >= 12 ? ' PM' : ' AM';
+        const h12 = hi % 12 || 12;
+        h = h12 < 10 ? `0${h12}` : `${h12}`;
+    } else {
+        period = 'HRS';
+    }
+    clock.el.querySelector('.timeHours').textContent    = display11(h);
+    clock.el.querySelector('.timeMinutes').textContent  = display11(m);
+    clock.el.querySelector('.timeSeconds').textContent  = display11(s);
+    clock.el.querySelector('.timePeriod').textContent   = period;
+}
+
+function refreshExtraClockFormats() {
+    extraClocks.forEach(c => tickExtraClock(c));
+}
+
+function setupExtraClockDrag(handle, clock) {
+    let dragging = false, pStartX = 0, pStartY = 0, elStartL = 0, elStartT = 0;
+
+    function onStart(e) {
+        if (e.button !== undefined && e.button !== 0) return;
+        dragging = true;
+        clock.el.classList.add('dragging');
+        clock.el.style.transition = 'none';
+        clock.el.style.zIndex = '8';
+        const pt = e.touches ? e.touches[0] : e;
+        pStartX = pt.clientX; pStartY = pt.clientY;
+        elStartL = clock.snapLeft; elStartT = clock.snapTop;
+        showSnapIndicators();
+        e.preventDefault(); e.stopPropagation();
+    }
+
+    function onMove(e) {
+        if (!dragging) return;
+        const pt = e.touches ? e.touches[0] : e;
+        const nl = Math.max(0, Math.min(elStartL + pt.clientX - pStartX, window.innerWidth  - EXTRA_W));
+        const nt = Math.max(0, Math.min(elStartT + pt.clientY - pStartY, window.innerHeight - EXTRA_H));
+        clock.el.style.left = nl + 'px';
+        clock.el.style.top  = nt + 'px';
+        updateSnapIndicators(nearestExtraZone(nl, nt));
+        e.preventDefault();
+    }
+
+    function onEnd() {
+        if (!dragging) return;
+        dragging = false;
+        clock.el.classList.remove('dragging');
+        clock.el.style.zIndex = '';
+        const cl = parseInt(clock.el.style.left) || clock.snapLeft;
+        const ct = parseInt(clock.el.style.top)  || clock.snapTop;
+        snapExtraClockTo(clock, nearestExtraZone(cl, ct), true);
+        hideSnapIndicators();
+    }
+
+    handle.addEventListener('mousedown',    onStart);
+    handle.addEventListener('touchstart',   onStart, { passive: false });
+    document.addEventListener('mousemove',  onMove);
+    document.addEventListener('touchmove',  onMove,  { passive: false });
+    document.addEventListener('mouseup',    onEnd);
+    document.addEventListener('touchend',   onEnd);
+    document.addEventListener('touchcancel', onEnd);
+}
+
+function addClockWidget(side) {
+    if (extraClocks.length >= MAX_EXTRA) return;
+
+    const id  = Date.now();
+    const tz  = timeZoneFormat;
+
+    const el = document.createElement('div');
+    el.className = 'extraClockWidget';
+    el.id        = `extraClock-${id}`;
+    el.innerHTML = `
+        <div class="extraClockInner">
+            <div class="extraClockHead">
+                <div class="extraDragHandle" title="Move"><i class="fa-solid fa-maximize"></i></div>
+                <button class="extraTzBtn" title="Change timezone">
+                    <span class="extraTzLabel">${tz}</span>
+                    <i class="fa-solid fa-caret-down"></i>
+                </button>
+                <button class="extraClockDismiss" title="Remove">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="extraClockBody">
+                <div class="worldTimeWrapper">
+                    <div class="timeHours">00</div>
+                    <div class="timeSeparator">:</div>
+                    <div class="timeMinutes">00</div>
+                    <div class="timeSeconds">00</div>
+                    <div class="timePeriod">AM</div>
+                </div>
+            </div>
+        </div>`;
+
+    document.querySelector('main').appendChild(el);
+
+    // Compute spawn position near main widget edge that was clicked
+    const spawnL = Math.max(EDGE_PAD, Math.min(
+        side === 'right' ? widgetCurrentLeft + WIDGET_W + 20
+        : side === 'left'  ? widgetCurrentLeft - EXTRA_W - 20
+        : widgetCurrentLeft + (WIDGET_W - EXTRA_W) / 2,
+        window.innerWidth - EXTRA_W - EDGE_PAD
+    ));
+    const spawnT = Math.max(HEADER_H, Math.min(
+        side === 'top' ? widgetCurrentTop - EXTRA_H - 20
+        : widgetCurrentTop + (WIDGET_H - EXTRA_H) / 2,
+        window.innerHeight - EXTRA_H - EDGE_PAD
+    ));
+
+    el.style.left = spawnL + 'px';
+    el.style.top  = spawnT + 'px';
+
+    const clock = { id, tz, el, snapLeft: spawnL, snapTop: spawnT, intervalId: null };
+    extraClocks.push(clock);
+
+    requestAnimationFrame(() => snapExtraClockTo(clock, nearestExtraZone(spawnL, spawnT), true));
+
+    el.querySelector('.extraClockDismiss').addEventListener('click', () => removeClockWidget(id));
+    el.querySelector('.extraTzBtn').addEventListener('click',        () => openExtraClockTzPicker(id));
+    setupExtraClockDrag(el.querySelector('.extraDragHandle'), clock);
+
+    clock.intervalId = setInterval(() => tickExtraClock(clock), 1000);
+    tickExtraClock(clock);
+    updateAddBtnState();
+}
+
+function removeClockWidget(id) {
+    const idx = extraClocks.findIndex(c => c.id === id);
+    if (idx === -1) return;
+    const clock = extraClocks[idx];
+    clearInterval(clock.intervalId);
+    clock.el.classList.add('extraClockOut');
+    clock.el.addEventListener('animationend', () => clock.el.remove(), { once: true });
+    extraClocks.splice(idx, 1);
+    updateAddBtnState();
+}
+
+function openExtraClockTzPicker(id) {
+    tzPickerTarget = id;
+    timezoneDropDopdownContent.style.display = 'flex';
+    displayItems(Object.values(timeZones));
+}
+
+function updateAddBtnState() {
+    widgetEl.classList.toggle('noMoreClocks', extraClocks.length >= MAX_EXTRA);
+}
+
+window.addEventListener('resize', () => {
+    extraClocks.forEach(c => snapExtraClockTo(c, nearestExtraZone(c.snapLeft, c.snapTop), false));
+});
 
 // ============================================================
 // INFO POPOVER
