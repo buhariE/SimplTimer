@@ -1308,3 +1308,25 @@ function toggleFocusMode() {
         ? 'fa-solid fa-circle-dot'
         : 'fa-solid fa-bullseye';
 }
+
+// ============================================================
+// INFO POPOVER
+// ============================================================
+
+const infoButton = document.getElementById('infoButton');
+const infoPopover = document.getElementById('infoPopover');
+let infoPopoverOpen = false;
+
+function toggleInfoPopover() {
+    infoPopoverOpen = !infoPopoverOpen;
+    infoPopover.classList.toggle('show', infoPopoverOpen);
+    infoButton.classList.toggle('active', infoPopoverOpen);
+}
+
+document.addEventListener('click', (e) => {
+    if (infoPopoverOpen && !e.target.closest('.infoButtonWrapper')) {
+        infoPopoverOpen = false;
+        infoPopover.classList.remove('show');
+        infoButton.classList.remove('active');
+    }
+});
