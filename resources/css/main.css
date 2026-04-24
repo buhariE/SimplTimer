@@ -1095,6 +1095,93 @@ header {
     opacity: 0.8;
 }
 
+.focusButton {
+    width: 35px;
+    height: 25px;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.focusButton:hover { opacity: 0.8; }
+
+.focusButton.active {
+    background-color: var(--accent-color1);
+    color: var(--text-color);
+    box-shadow: 0 0 10px rgba(3, 83, 164, 0.6);
+}
+
+/* ============================================================
+   FOCUS MODE
+   ============================================================ */
+
+/* Smooth transitions on everything that gets blurred */
+.title,
+.helpButton,
+.themeToggleWrapper,
+.dragHandle,
+.cardHead,
+.timerSideButtons,
+.stopwatchSideButtons,
+.menuWrapper {
+    transition: filter 0.35s ease, opacity 0.35s ease;
+}
+
+/* Blur the background image */
+[data-focus="on"] body::before {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Blur and dim all non-essential UI */
+[data-focus="on"] .title,
+[data-focus="on"] .helpButton,
+[data-focus="on"] .themeToggleWrapper,
+[data-focus="on"] .dragHandle,
+[data-focus="on"] .cardHead,
+[data-focus="on"] .timerSideButtons,
+[data-focus="on"] .stopwatchSideButtons,
+[data-focus="on"] .menuWrapper {
+    filter: blur(5px);
+    opacity: 0.12;
+    pointer-events: none;
+}
+
+/* Keep digit areas sharp */
+[data-focus="on"] .worldTimeWrapper,
+[data-focus="on"] .timerWrapper,
+[data-focus="on"] .stopwatchWrapper {
+    filter: none;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Glow on the visible digits */
+[data-focus="on"] .timeHours,
+[data-focus="on"] .timeMinutes,
+[data-focus="on"] .timeSeconds,
+[data-focus="on"] .timePeriod {
+    text-shadow: 0 0 18px rgba(185, 214, 242, 0.9),
+                 0 0 40px rgba(3, 83, 164, 0.5);
+}
+
+[data-focus="on"] .timerHours .value .digits,
+[data-focus="on"] .timerMinutes .value .digits,
+[data-focus="on"] .timerSeconds .value .digits,
+[data-focus="on"] #stopwatchCard .timeHours,
+[data-focus="on"] #stopwatchCard .timeMinutes,
+[data-focus="on"] #stopwatchCard .timeSeconds {
+    text-shadow: 0 0 18px rgba(185, 214, 242, 0.9),
+                 0 0 40px rgba(3, 83, 164, 0.5);
+}
+
 .helpModal {
     display: none;
     position: fixed;

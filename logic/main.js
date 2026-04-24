@@ -1292,3 +1292,19 @@ if (document.readyState === 'loading') {
 } else {
     initWidgetPosition();
 }
+
+// ============================================================
+// FOCUS MODE
+// ============================================================
+
+let focusMode = false;
+const focusBtn = document.getElementById('focusButton');
+
+function toggleFocusMode() {
+    focusMode = !focusMode;
+    document.documentElement.setAttribute('data-focus', focusMode ? 'on' : 'off');
+    focusBtn.classList.toggle('active', focusMode);
+    focusBtn.querySelector('i').className = focusMode
+        ? 'fa-solid fa-circle-dot'
+        : 'fa-solid fa-bullseye';
+}
