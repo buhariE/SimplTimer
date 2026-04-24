@@ -78,22 +78,14 @@ const timeZones = {
 function toggleTheme() {
     if (theme === 'dark') {
         theme = 'light';
+        document.documentElement.setAttribute('data-theme', 'light');
         themeToggleCircle.style.transform = 'translateX(24px)';
         themeToggleCircle.innerHTML = '<i class="fa-solid fa-sun"></i>';
-        document.documentElement.style.setProperty('--primary-color', '#f0f0f0');
-        document.documentElement.style.setProperty('--secondary-color', '#4a4a4a');
-        document.documentElement.style.setProperty('--text-color', '#323232ff');
-        document.documentElement.style.setProperty('--accent-color1', '#2a8ad8ff');
-        document.documentElement.style.setProperty('--accent-color2', '#064d33ff');
     } else {
         theme = 'dark';
+        document.documentElement.setAttribute('data-theme', 'dark');
         themeToggleCircle.style.transform = 'translateX(0px)';
         themeToggleCircle.innerHTML = '<i class="fa-solid fa-moon"></i>';
-        document.documentElement.style.setProperty('--primary-color', '#2b2b2b');
-        document.documentElement.style.setProperty('--secondary-color', '#d9d9d9');
-        document.documentElement.style.setProperty('--text-color', '#ffffff');
-        document.documentElement.style.setProperty('--accent-color1', '#0078DBff');
-        document.documentElement.style.setProperty('--accent-color2', '#00311Fff');
     }
 }
 
@@ -1131,4 +1123,172 @@ function playAudio(){
 
 function stopAudio(){
     audio.loop = false;
+}
+
+// ============================================================
+// WIDGET SNAP GRID POSITIONING
+// ============================================================
+
+const WIDGET_W = 345;
+const WIDGET_H = 295;  // dragHandle(14) + gap(6) + card(185) + gap(20) + menu(70)
+const HEADER_H = 80;   // clear the header
+const EDGE_PAD = 20;   // min margin from viewport edges
+
+const widgetEl     = document.getElementById('widgetWrapper');
+const dragHandleEl = document.getElementById('dragHandle');
+
+let isDragging      = false;
+let pointerStartX   = 0, pointerStartY   = 0;
+let widgetStartLeft = 0, widgetStartTop  = 0;
+let widgetCurrentLeft = 0, widgetCurrentTop = 0;
+
+function computeSnapZones() {
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const minX = EDGE_PAD;
+    const midX = Math.round((vw - WIDGET_W) / 2);
+    const maxX = vw - WIDGET_W - EDGE_PAD;
+
+    const minY = HEADER_H;
+    const midY = Math.round((vh - WIDGET_H) / 2);
+    const maxY = vh - WIDGET_H - EDGE_PAD;
+
+    return [
+        { name: 'TL', x: minX, y: minY },
+        { name: 'TC', x: midX, y: minY },
+        { name: 'TR', x: maxX, y: minY },
+        { name: 'ML', x: minX, y: midY },
+        { name: 'MC', x: midX, y: midY },
+        { name: 'MR', x: maxX, y: midY },
+        { name: 'BL', x: minX, y: maxY },
+        { name: 'BC', x: midX, y: maxY },
+        { name: 'BR', x: maxX, y: maxY },
+    ];
+}
+
+function nearestSnapZone(x, y) {
+    const zones = computeSnapZones();
+    let nearest = zones[0];
+    let minDist = Infinity;
+    for (const zone of zones) {
+        const dist = Math.hypot(x - zone.x, y - zone.y);
+        if (dist < minDist) { minDist = dist; nearest = zone; }
+    }
+    return nearest;
+}
+
+function snapWidgetTo(zone, animate) {
+    widgetEl.style.transition = animate
+        ? 'left 0.3s cubic-bezier(0.25,0.46,0.45,0.94), top 0.3s cubic-bezier(0.25,0.46,0.45,0.94)'
+        : 'none';
+    widgetEl.style.left = zone.x + 'px';
+    widgetEl.style.top  = zone.y + 'px';
+    widgetCurrentLeft   = zone.x;
+    widgetCurrentTop    = zone.y;
+    updateSnapIndicators(zone);
+}
+
+// --- Snap zone dot indicators ---
+let snapIndicatorEls = [];
+
+function buildSnapIndicators() {
+    snapIndicatorEls.forEach(el => el.remove());
+    snapIndicatorEls = [];
+    const mainEl = document.querySelector('main');
+    computeSnapZones().forEach(zone => {
+        const el = document.createElement('div');
+        el.className = 'snapZoneIndicator';
+        el.dataset.zone = zone.name;
+        el.style.left = (zone.x + WIDGET_W / 2) + 'px';
+        el.style.top  = (zone.y + WIDGET_H / 2) + 'px';
+        mainEl.appendChild(el);
+        snapIndicatorEls.push(el);
+    });
+}
+
+function showSnapIndicators() {
+    snapIndicatorEls.forEach(el => el.classList.add('visible'));
+}
+
+function hideSnapIndicators() {
+    snapIndicatorEls.forEach(el => el.classList.remove('visible', 'active'));
+}
+
+function updateSnapIndicators(activeZone) {
+    snapIndicatorEls.forEach(el => {
+        el.classList.toggle('active', el.dataset.zone === activeZone.name);
+    });
+}
+
+// --- Drag handlers ---
+function onDragStart(e) {
+    if (e.button !== undefined && e.button !== 0) return;
+    isDragging = true;
+    widgetEl.classList.add('dragging');
+    widgetEl.style.transition = 'none';
+
+    const pt = e.touches ? e.touches[0] : e;
+    pointerStartX   = pt.clientX;
+    pointerStartY   = pt.clientY;
+    widgetStartLeft = widgetCurrentLeft;
+    widgetStartTop  = widgetCurrentTop;
+
+    showSnapIndicators();
+    e.preventDefault();
+}
+
+function onDragMove(e) {
+    if (!isDragging) return;
+
+    const pt = e.touches ? e.touches[0] : e;
+    const dx = pt.clientX - pointerStartX;
+    const dy = pt.clientY - pointerStartY;
+
+    const newLeft = Math.max(0, Math.min(widgetStartLeft + dx, window.innerWidth  - WIDGET_W));
+    const newTop  = Math.max(0, Math.min(widgetStartTop  + dy, window.innerHeight - WIDGET_H));
+
+    widgetEl.style.left = newLeft + 'px';
+    widgetEl.style.top  = newTop  + 'px';
+
+    updateSnapIndicators(nearestSnapZone(newLeft, newTop));
+    e.preventDefault();
+}
+
+function onDragEnd() {
+    if (!isDragging) return;
+    isDragging = false;
+    widgetEl.classList.remove('dragging');
+
+    const currLeft = parseInt(widgetEl.style.left) || widgetCurrentLeft;
+    const currTop  = parseInt(widgetEl.style.top)  || widgetCurrentTop;
+    snapWidgetTo(nearestSnapZone(currLeft, currTop), true);
+    hideSnapIndicators();
+}
+
+dragHandleEl.addEventListener('mousedown',   onDragStart);
+dragHandleEl.addEventListener('touchstart',  onDragStart, { passive: false });
+document.addEventListener('mousemove',       onDragMove);
+document.addEventListener('touchmove',       onDragMove,  { passive: false });
+document.addEventListener('mouseup',         onDragEnd);
+document.addEventListener('touchend',        onDragEnd);
+document.addEventListener('touchcancel',     onDragEnd);
+
+// Reposition to nearest valid zone on resize
+window.addEventListener('resize', () => {
+    buildSnapIndicators();
+    snapWidgetTo(nearestSnapZone(widgetCurrentLeft, widgetCurrentTop), true);
+});
+
+// Place widget at center (MC zone) on load
+function initWidgetPosition() {
+    const mc = computeSnapZones().find(z => z.name === 'MC');
+    snapWidgetTo(mc, false);
+    buildSnapIndicators();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initWidgetPosition);
+} else {
+    initWidgetPosition();
 }

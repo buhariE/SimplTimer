@@ -8,12 +8,23 @@ button {
     background-color: transparent;
     border: none;
 }
-:root {
-    --primary-color: #2d2d2d;
-    --secondary-color: #d9d9d9;
-    --text-color: #ffffff;
-    --accent-color1: #0078DB;
-    --accent-color2: #00311F;
+/* Dark theme (default) */
+:root,
+[data-theme="dark"] {
+    --primary-color: #061a40;
+    --secondary-color: #003559;
+    --text-color: #b9d6f2;
+    --accent-color1: #0353a4;
+    --accent-color2: #006daa;
+}
+
+/* Light theme — same palette, inverted roles */
+[data-theme="light"] {
+    --primary-color: #daeaf8;   /* body bg  — lightest blue  */
+    --secondary-color: #ffffff; /* surface  — white cards    */
+    --text-color: #061a40;      /* text     — darkest navy   */
+    --accent-color1: #0353a4;   /* accent   — medium blue    */
+    --accent-color2: #006daa;   /* active   — medium-light   */
 }
 
 body {
@@ -21,13 +32,17 @@ body {
     padding: 0;
     font-family: Arial, sans-serif;
     background-color: var(--primary-color);
-    color: var(--secondary-color);
-    position:relative;
+    color: var(--text-color);
+    position: relative;
 
     width: 100vw;
     height: 100vh;
 
     transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] body {
+    background: linear-gradient(145deg, #061a40 0%, #003559 100%);
 }
 
 header {
@@ -60,7 +75,7 @@ header {
     position: relative;
 }
 .themeToggleWrapper i {
-    color: var(--primary-color);
+    color: var(--text-color);
     margin: 0 5px;
 }
 .themeToggleCircle, .hourToggleCircle {
@@ -79,7 +94,7 @@ header {
 }
 
 .themeToggleCircle i {
-    color: var(--secondary-color);
+    color: var(--text-color);
     font-size: 0.75em;
 }
 
@@ -87,15 +102,7 @@ header {
 main {
     width: 100%;
     height: 100%;
-
-    position:relative;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-
+    position: relative;
 }
 
 .timezoneBackDrop {
@@ -428,7 +435,7 @@ main {
 .customTimer {
     width: 60px;
     height: 25px;
-    background-color: #0078DB;
+    background-color: var(--accent-color1);
     border-radius: 15px;
     color: #ffffff;
 
@@ -469,10 +476,10 @@ main {
 .empty {
     width: 55px;
     height: 20px;
-    background-color: #a7a7a7;
-    opacity: 0.5;
+    background-color: rgba(185, 214, 242, 0.08);
+    opacity: 0.6;
     cursor: default;
-    border: dashed 2px #7a7a7a;
+    border: dashed 2px rgba(185, 214, 242, 0.25);
 }
 
 .empty>.delete {
@@ -694,7 +701,7 @@ main {
 }
 
 .lapTimesList::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
+    background: var(--accent-color1);
     border-radius: 10px;
 }
 
@@ -904,9 +911,9 @@ main {
 .resetButton, .playButton, .addButton {
     width: 30px;
     height: 30px;
-    background-color: #2b2b2b;
+    background-color: var(--accent-color1);
     border-radius: 50%;
-    color: #d9d9d9;
+    color: var(--text-color);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -972,17 +979,18 @@ main {
 .interactivePops {
     width: 345px;
     height: 35px;
-    border-radius:30px;
-    color:var(--primary-color);
+    border-radius: 30px;
+    color: var(--primary-color);
 
-    position: absolute;
-    transform: translateY(-165px);
+    position: fixed;
+    top: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
 
     display: grid;
     grid-template-columns: 1fr 8fr;
     align-items: center;
-
-
 }
 
 .interactivePops .icon {
@@ -1198,3 +1206,276 @@ dialog#notificationDialog {
 .closeDialog {
     color: var(--primary-color);
 }
+
+/* ============================================================
+   WIDGET SNAP GRID
+   ============================================================ */
+
+.widgetWrapper {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+    transition: left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                top  0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: 1;
+}
+
+.widgetWrapper.dragging {
+    transition: none;
+    z-index: 2;
+}
+
+.widgetWrapper .menuWrapper {
+    margin-top: 20px;
+}
+
+.dragHandle {
+    width: 345px;
+    height: 14px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: grab;
+    margin-bottom: 6px;
+    opacity: 0.35;
+    transition: opacity 0.2s ease;
+    color: var(--secondary-color);
+    font-size: 0.85em;
+}
+
+.dragHandle:hover {
+    opacity: 0.75;
+}
+
+.widgetWrapper.dragging .dragHandle {
+    cursor: grabbing;
+    opacity: 1;
+}
+
+.snapZoneIndicator {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: var(--accent-color1);
+    border: 2px solid var(--text-color);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.15s ease;
+    z-index: 0;
+}
+
+.snapZoneIndicator.visible {
+    opacity: 0.55;
+}
+
+.snapZoneIndicator.active {
+    opacity: 1;
+    background-color: var(--text-color);
+    border-color: var(--accent-color1);
+    transform: translate(-50%, -50%) scale(2);
+}
+
+/* ============================================================
+   DARK MODE OVERRIDES  (blue palette)
+   ============================================================ */
+
+[data-theme="dark"] .cardContentWrapper {
+    border: 1px solid rgba(185, 214, 242, 0.1);
+    box-shadow: 0 8px 32px rgba(3, 83, 164, 0.3);
+}
+
+[data-theme="dark"] .menuWrapper {
+    border: 1px solid rgba(185, 214, 242, 0.1);
+    box-shadow: 0 8px 32px rgba(3, 83, 164, 0.3);
+}
+
+[data-theme="dark"] .contentCard { color: var(--text-color); }
+
+[data-theme="dark"] .menuItem,
+[data-theme="dark"] .menuItem:hover,
+[data-theme="dark"] .activeMenu { color: var(--text-color); }
+
+[data-theme="dark"] .timezoneDropDownContent { color: var(--text-color); }
+
+[data-theme="dark"] .lapModalHeader h3,
+[data-theme="dark"] .helpModalHeader h3 { color: var(--text-color); }
+
+[data-theme="dark"] .shortcut,
+[data-theme="dark"] .shortcutGroup h4 { color: var(--text-color); }
+
+[data-theme="dark"] .closeDialog,
+[data-theme="dark"] .closeLapModal,
+[data-theme="dark"] .closeHelpModal { color: var(--text-color); }
+
+[data-theme="dark"] dialog#notificationDialog {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .interactivePops { color: var(--text-color); }
+
+[data-theme="dark"] .timerHours .value .digits,
+[data-theme="dark"] .timerMinutes .value .digits,
+[data-theme="dark"] .timerSeconds .value .digits { color: var(--text-color); }
+
+[data-theme="dark"] .timerWrapper input[type="text"]::placeholder {
+    color: var(--text-color);
+    opacity: 0.4;
+}
+
+[data-theme="dark"] label { color: var(--text-color); }
+
+[data-theme="dark"] .tzDDCListItem {
+    background-color: rgba(185, 214, 242, 0.12);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .tzDDCListItem:hover {
+    background-color: rgba(185, 214, 242, 0.22);
+}
+
+[data-theme="dark"] .lapTimeItem {
+    background-color: rgba(185, 214, 242, 0.1);
+}
+
+[data-theme="dark"] .lapNumber,
+[data-theme="dark"] .lapTime { color: var(--text-color); }
+
+[data-theme="dark"] .timeZoneDropDown {
+    background-color: rgba(185, 214, 242, 0.15);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .hourFormatToggle {
+    background-color: rgba(185, 214, 242, 0.15);
+}
+
+[data-theme="dark"] .format12,
+[data-theme="dark"] .format24 { color: var(--text-color); }
+
+[data-theme="dark"] .hourToggleCircle {
+    background-color: var(--accent-color1);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .themeToggleCircle {
+    background-color: var(--accent-color1);
+}
+
+[data-theme="dark"] .themeToggleWrapper i { color: var(--text-color); }
+[data-theme="dark"] .themeToggleCircle i  { color: var(--text-color); }
+
+[data-theme="dark"] kbd {
+    background-color: var(--accent-color1);
+    color: var(--text-color);
+}
+
+[data-theme="dark"] .dragHandle { color: var(--text-color); }
+
+/* ============================================================
+   LIGHT MODE OVERRIDES
+   ============================================================ */
+
+[data-theme="light"] body {
+    background: linear-gradient(145deg, #daeaf8 0%, #b9d6f2 100%);
+}
+
+/* Surfaces */
+[data-theme="light"] .cardContentWrapper {
+    border: 1px solid rgba(3, 83, 164, 0.12);
+    box-shadow: 0 8px 32px rgba(3, 83, 164, 0.1);
+}
+[data-theme="light"] .menuWrapper {
+    border: 1px solid rgba(3, 83, 164, 0.12);
+    box-shadow: 0 8px 32px rgba(3, 83, 164, 0.1);
+}
+
+/* Text — everywhere --primary-color was used as text on dark bg */
+[data-theme="light"] .contentCard { color: var(--text-color); }
+
+[data-theme="light"] .menuItem,
+[data-theme="light"] .menuItem:hover,
+[data-theme="light"] .activeMenu { color: var(--text-color); }
+
+[data-theme="light"] .timezoneDropDownContent { color: var(--text-color); }
+
+[data-theme="light"] .lapModalHeader h3,
+[data-theme="light"] .helpModalHeader h3 { color: var(--text-color); }
+
+[data-theme="light"] .shortcut,
+[data-theme="light"] .shortcutGroup h4 { color: var(--text-color); }
+
+[data-theme="light"] .closeDialog,
+[data-theme="light"] .closeLapModal,
+[data-theme="light"] .closeHelpModal { color: var(--text-color); }
+
+[data-theme="light"] dialog#notificationDialog {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+[data-theme="light"] .interactivePops { color: var(--text-color); }
+
+[data-theme="light"] .timerHours .value .digits,
+[data-theme="light"] .timerMinutes .value .digits,
+[data-theme="light"] .timerSeconds .value .digits { color: var(--text-color); }
+
+[data-theme="light"] .timerWrapper input[type="text"]::placeholder {
+    color: var(--text-color);
+    opacity: 0.35;
+}
+
+[data-theme="light"] label { color: var(--text-color); }
+
+/* Timezone list items */
+[data-theme="light"] .tzDDCListItem {
+    background-color: rgba(3, 83, 164, 0.07);
+    color: var(--text-color);
+}
+[data-theme="light"] .tzDDCListItem:hover {
+    background-color: rgba(3, 83, 164, 0.14);
+}
+
+/* Lap items */
+[data-theme="light"] .lapTimeItem {
+    background-color: rgba(3, 83, 164, 0.07);
+}
+[data-theme="light"] .lapNumber,
+[data-theme="light"] .lapTime { color: var(--text-color); }
+
+/* Card-head controls — solid blue buttons on white card */
+[data-theme="light"] .timeZoneDropDown {
+    background-color: var(--accent-color1);
+    color: #ffffff;
+}
+[data-theme="light"] .hourFormatToggle {
+    background-color: var(--accent-color1);
+}
+[data-theme="light"] .format12,
+[data-theme="light"] .format24 { color: #ffffff; }
+[data-theme="light"] .hourToggleCircle {
+    background-color: var(--accent-color2);
+    color: #ffffff;
+}
+
+/* Theme toggle */
+[data-theme="light"] .themeToggleCircle { background-color: var(--accent-color1); }
+[data-theme="light"] .themeToggleWrapper i { color: var(--text-color); }
+[data-theme="light"] .themeToggleCircle i  { color: #ffffff; }
+
+/* Button text on blue backgrounds */
+[data-theme="light"] .resetButton,
+[data-theme="light"] .playButton,
+[data-theme="light"] .addButton { color: #ffffff; }
+
+/* kbd chips */
+[data-theme="light"] kbd {
+    background-color: var(--accent-color1);
+    color: #ffffff;
+}
+
+/* Drag handle */
+[data-theme="light"] .dragHandle { color: var(--text-color); }

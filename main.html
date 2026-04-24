@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <!-- font awesome -->
     <script src="https://kit.fontawesome.com/53851b2526.js" crossorigin="anonymous"></script>
@@ -33,6 +33,10 @@
                 Message : Hello Word !
             </span>
         </div>
+        <div class="widgetWrapper" id="widgetWrapper">
+            <div class="dragHandle" id="dragHandle">
+                <i class="fa-solid fa-maximize"></i>
+            </div>
         <div class="cardContentWrapper">
             <div class="contentCards">
                 <div class="contentCard" id="worldClockCard" onload="displayTime()">
@@ -195,6 +199,7 @@
                 <div>Stopwatch</div>
             </button>
         </div>
+        </div><!-- end widgetWrapper -->
         <div class="timezoneBackDrop" onclick="closeBackDropOnClickOutside(event)">
             <div class="timezoneDropDownContent">
                 <div class="tzDDCheader">
