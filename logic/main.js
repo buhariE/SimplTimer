@@ -45,15 +45,20 @@ window.addEventListener('load',()=>{
             localStorage.setItem('theme','dark');
             localStorage.setItem('hourFormat','12H');
             localStorage.setItem('timeZoneFormat',Intl.DateTimeFormat().resolvedOptions().timeZone);
+            loadTheme('dark');
         }
         console.log(localStorage.length);
     }
 });
 
-const translateXvalue = 345;
 let contentCardMovement = 0;
-let max = 0;
-let min = -(2*translateXvalue);
+let currentCardIndex = 0;
+
+function getCardWidth() {
+    return document.querySelector('.cardContentWrapper').offsetWidth;
+}
+
+window.addEventListener('resize', () => moveCards(currentCardIndex));
 
 // plaecholder time zone values
 const timeZones = {
@@ -104,24 +109,43 @@ const timeZones = {
 
 // functions
 function loadTheme(themeValue){
+    const set = (k, v) => document.documentElement.style.setProperty(k, v);
     switch (themeValue) {
         case 'light':
-            themeToggleCircle.style.transform = 'translateX(24px)';
+            themeToggleCircle.style.transform = 'translateX(28px)';
             themeToggleCircle.innerHTML = '<i class="fa-solid fa-sun"></i>';
-            document.documentElement.style.setProperty('--primary-color', '#f0f0f0');
-            document.documentElement.style.setProperty('--secondary-color', '#4a4a4a');
-            document.documentElement.style.setProperty('--text-color', '#323232ff');
-            document.documentElement.style.setProperty('--accent-color1', '#2a8ad8ff');
-            document.documentElement.style.setProperty('--accent-color2', '#064d33ff');
+            set('--primary-color',   '#f2f2f7');
+            set('--secondary-color', '#ffffff');
+            set('--text-color',      '#1c1c1e');
+            set('--accent-color1',   '#007aff');
+            set('--accent-color2',   '#34c759');
+            set('--card-border',     'rgba(0,0,0,0.07)');
+            set('--card-shadow',     '0 2px 8px rgba(0,0,0,0.1)');
+            set('--input-bg',        'rgba(0,0,0,0.06)');
+            set('--item-bg',         'rgba(0,0,0,0.03)');
+            set('--separator',       'rgba(0,0,0,0.08)');
+            set('--text-dim',        'rgba(28,28,30,0.45)');
+            set('--color-success',   '#d1fae5');
+            set('--color-warning',   '#fef3c7');
+            set('--color-danger',    '#fee2e2');
             break;
         case 'dark':
             themeToggleCircle.style.transform = 'translateX(0px)';
             themeToggleCircle.innerHTML = '<i class="fa-solid fa-moon"></i>';
-            document.documentElement.style.setProperty('--primary-color', '#2b2b2b');
-            document.documentElement.style.setProperty('--secondary-color', '#d9d9d9');
-            document.documentElement.style.setProperty('--text-color', '#ffffff');
-            document.documentElement.style.setProperty('--accent-color1', '#0078DBff');
-            document.documentElement.style.setProperty('--accent-color2', '#00311Fff'); 
+            set('--primary-color',   '#1c1c1e');
+            set('--secondary-color', '#2c2c2e');
+            set('--text-color',      '#f2f2f7');
+            set('--accent-color1',   '#0a84ff');
+            set('--accent-color2',   '#30d158');
+            set('--card-border',     'rgba(255,255,255,0.08)');
+            set('--card-shadow',     '0 2px 16px rgba(0,0,0,0.4)');
+            set('--input-bg',        'rgba(255,255,255,0.10)');
+            set('--item-bg',         'rgba(255,255,255,0.05)');
+            set('--separator',       'rgba(255,255,255,0.08)');
+            set('--text-dim',        'rgba(242,242,247,0.45)');
+            set('--color-success',   '#1c4230');
+            set('--color-warning',   '#3a2e10');
+            set('--color-danger',    '#3a1a1a');
             break;
         default:
             break;
@@ -146,7 +170,7 @@ function loadHrFormat(formatValue){
             hourToggleCircle.innerHTML = '12H';
             break;
         case '24H':
-            hourToggleCircle.style.transform = 'translateX(23px)';
+            hourToggleCircle.style.transform = 'translateX(28px)';
             hourToggleCircle.innerHTML = '24H';
             break;
         default:
@@ -166,7 +190,8 @@ function toggleFormat() {
 }
 
 function moveCards(index){
-    contentCardMovement = -(index * translateXvalue);
+    currentCardIndex = index;
+    contentCardMovement = -(index * getCardWidth());
     contentCardsContainer.style.transform = `translateX(${contentCardMovement}px)`;
     menuItems.forEach((item, idx) => {
         if(idx === index){
@@ -200,11 +225,11 @@ function intify(string){
 }
 
 function reformat11(text){
-    return text === '1 1'?11:text;
+    return typeof text === 'string' ? text.replace(/\s/g, '') : text;
 }
 
 function display11(text){
-    return text == 11?'1 1':text;
+    return text;
 }
 
 function displayTime(){
@@ -261,18 +286,12 @@ function validateTimerInput(maxvalue,minvalue,value){
 }
 
 function displayDD(num){
-    if(num < 10){
-        return `0${num}`;
-    } else if(num == 11){
-        return '1 1';
-    } return num;
+    if(num < 10) return `0${num}`;
+    return num;
 }
 function displayDW(word){
-    if(word == '11'){
-        return '1 1';
-    } else if(word === '60'){
-        return '59';
-    } return word;
+    if(word === '60') return '59';
+    return word;
 }
 
 function incrementTime(max,min,parentClass,successorClass){
@@ -374,11 +393,16 @@ function countDown(){
         timerSideButtons[2].classList.add('disabled');
         timerSideButtons[2].setAttribute('aria-disabled','true');
 
+        const h0 = parseInt(intify(timerHoursDigits.value)) || 0;
+        const m0 = parseInt(intify(timerMinutesDigits.value)) || 0;
+        const s0 = parseInt(intify(timerSecondsDigits.value)) || 0;
+        startBorderProgress(h0 * 3600 + m0 * 60 + s0);
+
         intervalIdCtDwn = setInterval(countDownTime, 1000, 0, timerSecondsDigits, 59, timerMinutesDigits, timerHoursDigits,intervalIdCtDwn,function(){
             timerSideButtons[1].classList.remove('stop');
             timerSideButtons[1].innerHTML = '<i class="fa-solid fa-play"></i>';
-
             enableTimerPlaySideButtons();
+            resetBorderProgress();
         });
 
     }
@@ -418,6 +442,11 @@ function countDownTime(min,secs,max,mins,hrs,id,fallbackf){
         secs.value =seconds < 10?'0'+seconds:display11(seconds);
 
     }
+
+    const remaining = parseInt(intify(hrs.value)||0) * 3600
+                    + parseInt(intify(mins.value)||0) * 60
+                    + parseInt(intify(secs.value)||0);
+    updateBorderProgress(remaining, timerTotalSeconds);
 }
 
 
@@ -430,6 +459,7 @@ function resetTime(timeArr){
         timerSideButtons[1].classList.remove('stop');
         timerSideButtons[1].innerHTML = '<i class="fa-solid fa-play"></i>';
     }
+    resetBorderProgress();
     enableTimerPlaySideButtons();
 }
 
@@ -1246,4 +1276,26 @@ function stopAudio(){
     audio.pause();
     audio.currentTime = 0;
     audio.loop = false;
+}
+
+// ── Border progress ───────────────────────────────────
+
+let timerTotalSeconds = 0;
+
+function updateBorderProgress(remaining, total) {
+    const pct = total > 0 ? (remaining / total) * 100 : 0;
+    document.documentElement.style.setProperty('--timer-progress', `${pct}%`);
+}
+
+function resetBorderProgress() {
+    const el = document.querySelector('.timerBorderProgress');
+    if (el) el.classList.remove('active');
+    document.documentElement.style.setProperty('--timer-progress', '0%');
+}
+
+function startBorderProgress(totalSecs) {
+    timerTotalSeconds = totalSecs;
+    document.documentElement.style.setProperty('--timer-progress', '100%');
+    const el = document.querySelector('.timerBorderProgress');
+    if (el) el.classList.add('active');
 }

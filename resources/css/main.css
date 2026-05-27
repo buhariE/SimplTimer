@@ -1,252 +1,228 @@
-@font-face{
-    font-family: 'Digital-7';
-    src: url('../fonts/digital-7.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
 button {
     background-color: transparent;
     border: none;
+    cursor: pointer;
 }
+
+/* ── Design tokens ───────────────────────────────────── */
+
 :root {
-    --primary-color: #2d2d2d;
-    --secondary-color: #d9d9d9;
-    --text-color: #ffffff;
-    --accent-color1: #0078DB;
-    --accent-color2: #00311F;
+    /* Core palette — overridden per theme by JS */
+    --primary-color:   #1c1c1e;
+    --secondary-color: #2c2c2e;
+    --text-color:      #f2f2f7;
+    --accent-color1:   #0a84ff;
+    --accent-color2:   #30d158;
+
+    /* Semantic notification colors */
+    --color-success: #1c4230;
+    --color-warning: #3a2e10;
+    --color-danger:  #3a1a1a;
+
+    /* Surface tints */
+    --input-bg:   rgba(255, 255, 255, 0.10);
+    --item-bg:    rgba(255, 255, 255, 0.05);
+    --separator:  rgba(255, 255, 255, 0.08);
+    --text-dim:   rgba(242, 242, 247, 0.45);
+
+    /* Card chrome */
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-shadow: 0 2px 16px rgba(0, 0, 0, 0.4);
+
+    /* Layout */
+    --card-width: min(400px, calc(100vw - 32px));
+
+    /* Typography */
+    --font-mono: 'Space Mono', monospace;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
 }
+
 ::highlight(search-highlight) {
-  background-color: yellow;
-  color: black;
+    background-color: var(--accent-color1);
+    color: #ffffff;
 }
+
+/* ── Base ────────────────────────────────────────────── */
+
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: var(--font-sans);
     background-color: var(--primary-color);
-    color: var(--secondary-color);
-    position:relative;
-
+    color: var(--text-color);
+    position: relative;
     width: 100vw;
     height: 100vh;
-
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px 200px;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+
 header {
-    width: calc(100% - 20px);
-    height: fit-content;
-    padding: 5px 10px;
-
+    width: calc(100% - 32px);
+    padding: 8px 16px;
     position: absolute;
-    top:30px;
-    left:0;
-
+    top: 24px;
+    left: 0;
     display: flex;
     justify-content: space-between;
-
+    align-items: center;
     z-index: 5;
 }
 
-.themeToggleWrapper, .hourFormatToggle {
-    width: 50px;
-    height: 25px;
+.title {
+    font-weight: 700;
+    font-size: 0.9em;
+    letter-spacing: 0.32em;
+    opacity: 0.9;
+}
 
-    background-color: var(--secondary-color);
-    border-radius: 15px;
+.headerButtons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
 
+.helpButton {
+    height: 30px;
+    padding: 0 14px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-radius: 12px;
+    border: 1px solid var(--card-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.78em;
+    transition: opacity 0.15s ease;
+}
+
+.helpButton:hover { opacity: 0.7; }
+.helpButton:focus-visible { outline: 2px solid var(--accent-color1); outline-offset: 2px; }
+
+/* ── Theme toggle ────────────────────────────────────── */
+
+.themeToggleWrapper {
+    width: 58px;
+    height: 30px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-
     position: relative;
+    transition: opacity 0.15s ease;
 }
+
+.themeToggleWrapper:hover { opacity: 0.75; }
+.themeToggleWrapper:focus-visible { outline: 2px solid var(--accent-color1); outline-offset: 2px; }
+
 .themeToggleWrapper i {
-    color: var(--primary-color);
+    color: var(--text-color);
     margin: 0 5px;
+    font-size: 0.6em;
+    opacity: 0.7;
 }
-.themeToggleCircle, .hourToggleCircle {
-    height: 21px;
-    width: 21px;
-    background-color: var(--primary-color);
+
+.themeToggleCircle {
+    height: 22px;
+    width: 22px;
+    background-color: var(--accent-color1);
     border-radius: 50%;
     position: absolute;
-    top: 2px;
-    left: 2px;
+    top: 4px;
+    left: 4px;
     transition: transform 0.3s ease;
-
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .themeToggleCircle i {
-    color: var(--secondary-color);
-    font-size: 0.75em;
+    color: #ffffff;
+    font-size: 0.65em;
 }
 
+/* ── Main layout ─────────────────────────────────────── */
 
 main {
     width: 100%;
     height: 100%;
-
-    position:relative;
-
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-
+    gap: 16px;
 }
 
-.timezoneBackDrop {
-    width:100%;
-    height: 100%;
+/* ── Card stack + border progress ───────────────────── */
+
+.cardStack {
+    position: relative;
+    width: var(--card-width);
+    height: 216px;
+}
+
+.timerBorderProgress {
     position: absolute;
-    top:0;
-    left:0;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
-    display:none;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
+    inset: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: conic-gradient(
+        from -90deg,
+        var(--accent-color1) 0% var(--timer-progress, 100%),
+        rgba(255, 255, 255, 0.06) var(--timer-progress, 100%) 100%
+    );
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.timezoneDropDownContent {
-    width: calc(345px - 20px);
-    height: calc(400px - 20px);
-    background-color: var(--secondary-color);
-    border-radius: 15px;
-    overflow: hidden;
-    border: solid 1px #fff;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    color: var(--primary-color);
-    padding:10px;
-
-    display: flex;
-    flex-direction: column;
-
-}
-
-.tzDDCheader {
-    width: 100%;
-    height: 10%;
-    font-size:0.8em;
-    font-weight: bold;
-    display: flex;
-    justify-content: end;
-    align-items: center;
-}
-
-.headertext {
-    flex-grow: 1;
-    text-align: center;
-}
-
-.closeBtn {
-    cursor: pointer;
-    font-size: 1.2em;
-    width:30px;
-    height:100%;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    background-color: transparent;
-}
-
-.tzDDCSearch {
-    width: 100%;
-    height: calc(15% - 12px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-    padding-bottom:10px;
-}
-
-.searchWrapper {
-    width: 70%;
-    height: 100%;
-    background-color: #ffffff;
-    border-radius: 25px;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    gap: 5px;
-}
-
-.searchWrapper input {
-    width: 100%;
-    height: 70%;
-    border: none;
-    outline: none;
-    font-size: 0.7em;
-    border-radius: 10px;
-}
-
-.searchWrapper i {
-    font-size: 0.8em;
-    color: #7a7a7a;
-}
-
-.tzDDCList {
-    width: 100%;
-    height: 80%;
-    margin-top: 10px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-}
-
-.tzDDCListItem {
-    width: calc(100% - 20px);
-    height: 50px;
-    background-color: var(--text-color);
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    padding: 0 10px;
-    cursor: pointer;
-    margin-bottom: 5px;
-    font-size: 0.75em;
-}
-
-.defaultItem {
-    opacity: 0.8;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.selectedTimeZone {
-    width: calc(100% - 22px);
-    border-left:solid 2px orange;
-}
-
-.hitItem {
-    font-weight:bold;
-    width: calc(100% - 21px);
-    border-left:solid 1px var(--accent-color1);
+.timerBorderProgress.active {
     opacity: 1;
 }
 
-.emptyList {
-    background-color: transparent;
-    opacity:0.5;
-    justify-content: center;
+.timerBorderProgress.active + .cardContentWrapper {
+    border-color: transparent;
 }
 
-.cardContentWrapper {
-    width: 345px;
-    height: 185px;
-    background-color: var(--secondary-color);
-    border-radius: 15px;
-    overflow: hidden;
+/* ── Card wrapper (carousel) ─────────────────────────── */
 
+.cardContentWrapper {
+    width: 100%;
+    height: 100%;
+    background-color: var(--secondary-color);
+    border-radius: 20px;
+    overflow: hidden;
     position: relative;
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
 }
 
 .cardContentWrapperNotification {
@@ -254,13 +230,10 @@ main {
 }
 
 @keyframes pulse {
-    from {
-        box-shadow: 0px 0px 10px 5px red;
-    }
-    to {
-        box-shadow: none;
-    }
+    from { box-shadow: 0 0 0 0 rgba(255, 69, 58, 0.6); }
+    to   { box-shadow: 0 0 0 14px rgba(255, 69, 58, 0); }
 }
+
 .contentCards {
     width: fit-content;
     height: 100%;
@@ -270,93 +243,113 @@ main {
 }
 
 .contentCard {
-    width: calc(345px - 20px);
-    height: calc(185px - 20px);
-    border-radius: 15px;
+    width: calc(var(--card-width) - 20px);
+    height: calc(100% - 20px);
+    border-radius: 20px;
     background-color: var(--secondary-color);
-    color: var(--primary-color);
+    color: var(--text-color);
     display: grid;
-    grid-template-rows: 25px auto;
-    padding:10px;
-
-
+    grid-template-rows: 28px auto;
+    padding: 10px;
 }
+
+/* ── Card head ───────────────────────────────────────── */
 
 .cardHead {
     width: 100%;
     height: 100%;
-    display:flex;
+    display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     font-size: 0.75em;
 }
 
-
 .timeZoneDropDown {
-    width: 120px;
     height: 100%;
-    background-color: var(--text-color);
-    color: var(--primary-color);
+    padding: 0 8px 0 10px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
     border-radius: 20px;
-
+    border: 1px solid var(--card-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 4px;
     cursor: pointer;
+    font-weight: 700;
+    min-width: 108px;
+    transition: opacity 0.15s ease;
+}
 
-    font-weight: bold;
+.timeZoneDropDown:hover { opacity: 0.75; }
+.timeZoneDropDown:focus-visible { outline: 2px solid var(--accent-color1); outline-offset: 2px; }
+
+.timezoneValue {
+    font-size: 0.68em;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 84px;
 }
 
 .dropDownBtn {
-    width:20%;
-    display:flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-}
-.timezoneValue {
-    width:80%;
-    text-overflow: ellipsis;
-    font-size:0.7em;
-    font-weight:bold;
-    display: flex;
+    flex-shrink: 0;
+    opacity: 0.6;
 }
 
 .dropDownBtn i {
-    font-size: 0.75em;
-    margin:-1.4px;
+    font-size: 0.65em;
+    margin: -1px;
 }
 
 .hourFormatToggle {
-    width: 50px;
-    height:  100%;
-    background-color: var(--text-color);
+    width: 58px;
+    height: 30px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--card-border);
     border-radius: 15px;
     display: flex;
     justify-content: space-around;
     align-items: center;
     cursor: pointer;
-
     position: relative;
+    transition: opacity 0.15s ease;
 }
 
+.hourFormatToggle:hover { opacity: 0.75; }
+.hourFormatToggle:focus-visible { outline: 2px solid var(--accent-color1); outline-offset: 2px; }
+
 .format12, .format24 {
-    font-size: 0.65em;
-    color: var(--primary-color);
+    font-size: 7px;
+    font-weight: 700;
+    color: var(--text-color);
+    opacity: 0.5;
 }
 
 .hourToggleCircle {
-    width:23px;
-    height: 23px;
-    top:1px;
-    display:flex;
+    width: 22px;
+    height: 22px;
+    top: 4px;
+    background-color: var(--accent-color1);
+    border-radius: 50%;
+    position: absolute;
+    left: 4px;
+    display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    color: var(--text-color);
-    font-size: 0.55em;
+    font-weight: 700;
+    color: #ffffff;
+    font-size: 7px;
+    transition: transform 0.3s ease;
 }
+
+/* ── Card body ───────────────────────────────────────── */
 
 .cardBody {
     width: 100%;
@@ -367,202 +360,247 @@ main {
     align-items: center;
 }
 
+/* ── World clock & stopwatch ─────────────────────────── */
+
 .worldTimeWrapper, .stopwatchWrapper {
-    width:100%;
+    width: 100%;
     height: 100%;
-    display:flex;
+    display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap:15px;
-    font-weight: bold;
+    gap: 8px;
 }
+
 .timeHours, .timeMinutes {
-    width: 55px;
-    height:55px;
+    width: 66px;
+    height: 66px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size:55px;
-    font-family: 'Digital-7', monospace;
+    font-size: 60px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: -2px;
+    color: var(--text-color);
 }
+
 .timeSeparator {
-    width : 15px;
-    height:55px;
+    width: 12px;
+    height: 66px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size:35px;
-    opacity: 0.8;
+    font-size: 32px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
 }
 
 .timeSeconds {
-    width: 35px;
-    height:55px;
+    width: 40px;
+    height: 66px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size:25px;
-    opacity: 0.7;
-    font-family: 'Digital-7', monospace;
+    font-size: 24px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
 }
 
 .timePeriod {
-    width: 35px;
-    height:55px;
+    width: 28px;
+    height: 66px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size:15px;
-    opacity: 0.7;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.04em;
 }
 
+/* ── Timer card head — preset pills ─────────────────── */
+
 .customTimersWrappers {
-    width:100%;
+    width: 100%;
     height: 100%;
-    display:flex;
+    display: flex;
     flex-direction: row;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
-    gap:5px;
-    font-weight: bold;
+    gap: 6px;
 }
 
 .customTimer {
-    width: 60px;
-    height: 25px;
-    background-color: #0078DB;
-    border-radius: 15px;
-    color: #ffffff;
-
-    display:flex;
-    flex-direction: column;
+    height: 22px;
+    min-width: 54px;
+    padding: 0 8px;
+    background-color: rgba(10, 132, 255, 0.18);
+    border: 1px solid rgba(10, 132, 255, 0.35);
+    border-radius: 11px;
+    color: var(--accent-color1);
+    display: flex;
     justify-content: center;
     align-items: center;
-    font-size:0.7em;
-    font-weight:100;
-
+    font-size: 0.6em;
+    font-family: var(--font-mono);
     cursor: pointer;
     position: relative;
+    transition: opacity 0.15s ease, transform 0.1s ease, background-color 0.15s ease;
+}
+
+.customTimer:not(.empty):hover {
+    opacity: 0.85;
+    transform: scale(1.04);
+    background-color: rgba(10, 132, 255, 0.28);
 }
 
 .customTimer .delete {
     position: absolute;
-    width: 20px;
-    height: 20px;
-    border-radius: 15px;
-    background: red;
-    color:white;
-
-    display: flex;
-    align-items:center;
-    justify-content:center;
-
-    font-weight: bold;
-    font-size:1em;
-
-    cursor:pointer;
-
-    top:2.5px;
-    right:2.5px;
-
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ff453a;
+    color: white;
     display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7em;
+    cursor: pointer;
+    top: -5px;
+    right: -5px;
+    border: 1.5px solid var(--secondary-color);
 }
 
+/* Empty pills: invisible by default, shown on card head hover */
 .empty {
-    width: 55px;
-    height: 20px;
-    background-color: #a7a7a7;
-    opacity: 0.5;
+    min-width: 44px;
+    height: 18px;
+    background-color: transparent;
+    border: 1.5px dashed var(--separator);
+    color: transparent;
     cursor: default;
-    border: dashed 2px #7a7a7a;
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
-.empty>.delete {
-    display: none;
+.cardHead:hover .empty {
+    opacity: 0.45;
 }
+
+.empty > .delete {
+    display: none !important;
+}
+
+/* ── Timer card body ─────────────────────────────────── */
 
 #timerCard .cardBody, #stopwatchCard .cardBody {
     width: 100%;
     height: 100%;
-    display:grid;
+    display: grid;
     grid-template-columns: 75% 25%;
-    gap: 5px;
+    gap: 8px;
+    overflow: hidden;
 }
 
 .timerWrapper {
     width: 100%;
     height: 100%;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-}
-
-.timerHours, .timerMinutes, .timerSeconds {
-    width: 75px;
-    height:100%;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.timerHours .value, .timerMinutes .value, .timerSeconds .value {
-    height: 50%;
-    display:flex;
-    flex-direction: row;
     justify-content: center;
     align-items: center;
     gap: 2px;
 }
 
+/* ── Timer H / M / S columns ─────────────────────────── */
+
+.timerHours, .timerMinutes, .timerSeconds {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.timerHours, .timerMinutes {
+    width: 76px;
+    height: 100%;
+}
+
+.timerSeconds {
+    width: 54px;
+    height: 100%;
+}
+
+/* Label sits below the digit */
+.timerHours .value, .timerMinutes .value, .timerSeconds .value {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0px;
+}
+
 .timerHours .value .digits, .timerMinutes .value .digits {
-    width: 45px;
-    font-size:45px;
-    line-height: 46px;
-    font-family: 'Digital-7', monospace;
+    width: 68px;
+    font-size: 44px;
+    line-height: 1;
+    font-family: var(--font-mono);
+    font-weight: 700;
     background-color: transparent;
     border: none;
-    color: var(--primary-color);
+    color: var(--text-color);
     text-align: center;
+    letter-spacing: -1px;
+    outline: none;
 }
 
 .timerSeconds .value .digits {
-    font-size:30px;
-    line-height: 31px;
-    font-family: 'Digital-7', monospace;
-    width:30px;
+    font-size: 30px;
+    line-height: 1;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    width: 46px;
     border: none;
     background-color: transparent;
-    color: var(--primary-color);
-    text-align: end;
+    color: var(--text-dim);
+    text-align: center;
+    outline: none;
 }
 
 .timerWrapper input[type="text"]::placeholder {
-    color: var(--primary-color);
-    opacity: 1;
+    color: var(--text-dim);
+    opacity: 0.5;
 }
 
-.timerHours .value .label, .timerMinutes .value .label, .timerSeconds .value .label, label {
-    font-size:12px;
-    opacity: 0.7;
+.timerHours .value label,
+.timerMinutes .value label,
+.timerSeconds .value label,
+label {
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 1px;
 }
 
 .increment, .decrement {
     width: 100%;
-    height: 15%;
-    display:flex;
+    height: 16px;
+    display: none;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    opacity: 0.2;
-    font-size: 0.6em;
+    font-size: 0.52em;
+    background-color: var(--item-bg);
+    color: var(--text-color);
+    border-radius: 4px;
+    transition: background-color 0.12s ease;
+}
 
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-
-    display:none;
+.increment:hover, .decrement:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 .timerHours:hover .increment,
@@ -571,240 +609,398 @@ main {
 .timerMinutes:hover .decrement,
 .timerSeconds:hover .increment,
 .timerSeconds:hover .decrement {
-    display:flex;
+    display: flex;
 }
-
-
-/* .increment {
-    border-bottom: 0.5px solid #a7a7a7;
-}
-
-.decrement {
-    border-top: 0.5px solid #a7a7a7;
-} */
-
 
 .timerSeparator {
-    width: 15px;
-    height:100%;
+    width: 12px;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size:35px;
-    opacity: 0.8;
+    font-size: 28px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    position: relative;
+    z-index: 1;
 }
+
+/* ── Side buttons ────────────────────────────────────── */
 
 .timerSideButtons, .stopwatchSideButtons {
     width: 100%;
     height: 100%;
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap:10px;
-}
-
-.stopwatchSideButtons {
-	width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
-/* Lap Button Styling */
-.lapButton {
-    width: 30px;
-    height: 30px;
-    background-color: var(--accent-color1);
+.resetButton, .playButton, .addButton, .lapButton {
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    color: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    font-size: 0.85em;
+    font-size: 0.8em;
+    transition: opacity 0.15s ease, transform 0.1s ease;
 }
 
-#stopwatchCard {
-    grid-template-rows: 25px auto 100px;
+.resetButton:not(.disabled):hover,
+.addButton:not(.disabled):hover,
+.lapButton:not(.disabled):hover {
+    opacity: 0.72;
+    transform: scale(1.06);
 }
 
-.lapTimesWrapper {
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.1);
+.playButton:not(.disabled):hover {
+    opacity: 0.82;
+    transform: scale(1.06);
+}
+
+.resetButton {
+    background-color: var(--input-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-color);
+}
+
+.addButton {
+    background-color: rgba(10, 132, 255, 0.2);
+    border: 1px solid rgba(10, 132, 255, 0.4);
+    color: var(--accent-color1);
+}
+
+.playButton {
+    width: 38px;
+    height: 38px;
+    font-size: 1em;
+    background-color: var(--accent-color2);
+    border: none;
+    color: #ffffff;
+}
+
+.lapButton {
+    background-color: rgba(10, 132, 255, 0.2);
+    border: 1px solid rgba(10, 132, 255, 0.4);
+    color: var(--accent-color1);
+}
+
+.stop {
+    background-color: rgba(255, 69, 58, 0.25) !important;
+    border: 1px solid rgba(255, 69, 58, 0.5) !important;
+    color: #ff453a !important;
+}
+
+.disabled {
+    opacity: 0.22;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ── Menu bar ────────────────────────────────────────── */
+
+.menuWrapper {
+    width: var(--card-width);
+    height: 80px;
+    background-color: var(--secondary-color);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+}
+
+.menuItem {
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.32;
     border-radius: 10px;
-    padding: 5px;
-    overflow: hidden;
+    padding: 6px 20px;
+    transition: opacity 0.15s ease;
 }
 
-.lapTimesList {
+.menuItem i {
+    font-size: 22px;
+}
+
+.menuItem:hover {
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.menuItem:focus-visible {
+    outline: 2px solid var(--accent-color1);
+    outline-offset: 2px;
+}
+
+.activeMenu {
+    opacity: 1;
+}
+
+.menuItem div {
+    font-size: 0.72em;
+    letter-spacing: 0.02em;
+}
+
+/* ── Toast notification ──────────────────────────────── */
+
+.interactivePops {
+    min-width: 220px;
+    max-width: calc(var(--card-width) - 32px);
+    height: auto;
+    padding: 10px 16px;
+    border-radius: 24px;
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--separator);
+}
+
+.interactivePops:not(.hide) {
+    animation: toastSlideUp 0.22s ease;
+}
+
+@keyframes toastSlideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.interactivePops .icon {
+    font-size: 0.82em;
+    flex-shrink: 0;
+}
+
+.interactivePops .content {
+    font-size: 0.7em;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.moodSuccess {
+    background-color: var(--color-success);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.2);
+}
+
+.moodWarning {
+    background-color: var(--color-warning);
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.2);
+}
+
+.moodDanger {
+    background-color: var(--color-danger);
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.2);
+}
+
+.default {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    opacity: 0.92;
+}
+
+.hide {
+    display: none;
+}
+
+/* ── Timezone backdrop ───────────────────────────────── */
+
+.timezoneBackDrop {
     width: 100%;
     height: 100%;
-    overflow-y: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.timezoneDropDownContent {
+    width: calc(var(--card-width) - 24px);
+    height: 380px;
+    background-color: var(--secondary-color);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    color: var(--text-color);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tzDDCheader {
+    font-size: 0.8em;
+    font-weight: 700;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+}
+
+.headertext {
+    flex-grow: 1;
+    text-align: center;
+    color: var(--text-color);
+}
+
+.closeBtn {
+    cursor: pointer;
+    font-size: 1em;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: var(--item-bg);
+    color: var(--text-color);
+    transition: background-color 0.15s ease;
+}
+
+.closeBtn:hover { background-color: rgba(255, 255, 255, 0.12); }
+
+.tzDDCSearch {
+    padding: 8px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid var(--separator);
+    margin-bottom: 8px;
+}
+
+.searchWrapper {
+    width: 82%;
+    height: 30px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+}
+
+.searchWrapper input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 0.72em;
+    background: transparent;
+    color: var(--text-color);
+    font-family: var(--font-sans);
+}
+
+.searchWrapper input::placeholder {
+    color: var(--text-dim);
+}
+
+.searchWrapper i {
+    font-size: 0.72em;
+    color: var(--text-dim);
+}
+
+.tzDDCList {
+    flex: 1;
     overflow-x: hidden;
+    overflow-y: scroll;
     display: flex;
     flex-direction: column;
     gap: 3px;
 }
 
-.lapTimeItem {
-    width: calc(100% - 10px);
-    min-height: 30px;
-    background-color: var(--text-color);
-    border-radius: 5px;
-    padding: 10px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    font-size: 0.75em;
-    animation: slideIn 0.3s ease;
-    gap: 15px;
-}
+.tzDDCList::-webkit-scrollbar { width: 4px; }
+.tzDDCList::-webkit-scrollbar-track { background: transparent; }
+.tzDDCList::-webkit-scrollbar-thumb { background: var(--input-bg); border-radius: 4px; }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateX(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.lapNumber {
-    font-weight: bold;
-    color: var(--primary-color);
-    text-align: left;
-}
-
-.lapTime {
-    font-family: 'Digital-7', monospace;
-    font-size: 1.2em;
-    text-align: right;
-    color: var(--primary-color);
-}
-
-/* Scrollbar styling for lap list */
-.lapTimesList::-webkit-scrollbar {
-    width: 5px;
-}
-
-.lapTimesList::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.lapTimesList::-webkit-scrollbar-thumb {
-    background: var(--primary-color);
-    border-radius: 10px;
-}
-
-.lapTimesList::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color1);
-}
-
-.lapHeader {
-    width: 100%;
-    height: 25px;
+.tzDDCListItem {
+    width: calc(100% - 16px);
+    min-height: 40px;
+    background-color: var(--item-bg);
+    border-radius: 8px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0 5px;
-    margin-bottom: 5px;
-}
-
-.lapHeaderTitle {
-    font-size: 0.7em;
-    font-weight: bold;
-    opacity: 0.7;
-}
-
-.toggleLapsBtn {
-    width: 25px;
-    height: 25px;
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding: 0 8px;
     cursor: pointer;
-    font-size: 0.7em;
-    transition: transform 0.3s ease;
+    font-size: 0.72em;
+    color: var(--text-color);
+    transition: background-color 0.1s ease;
 }
 
-.toggleLapsBtn:hover {
-    opacity: 0.8;
+.tzDDCListItem:hover { background-color: rgba(255, 255, 255, 0.09); }
+
+.selectedTimeZone {
+    border-left: 2px solid var(--accent-color1);
+    padding-left: 6px;
+    background-color: rgba(10, 132, 255, 0.1);
 }
 
-.toggleLapsBtn.collapsed {
-    transform: rotate(180deg);
+.hitItem {
+    font-weight: 700;
+    border-left: 2px solid var(--accent-color1);
+    padding-left: 6px;
 }
 
-.lapTimesWrapper.collapsed {
-    display: none;
-}
-
-.noLapsMessage {
-    width: 100%;
-    height: 100%;
-    display: flex;
+.emptyList {
+    background-color: transparent;
+    opacity: 0.4;
     justify-content: center;
-    align-items: center;
-    font-size: 0.65em;
-    opacity: 0.5;
-    text-align: center;
-    padding: 10px;
 }
 
-#lapCount {
-    color: var(--accent-color1);
-    font-weight: bold;
-}
+/* ── Stopwatch card ──────────────────────────────────── */
 
 #stopwatchCard .cardHead {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: flex-start;  /* Align to left */
-    align-items: center;
+    justify-content: flex-start;
 }
 
-/* View Laps Button in Card Head */
 .viewLapsBtn {
-    width: auto;
     height: 20px;
     padding: 0 10px;
-    background-color: var(--accent-color1);
-    color: #ffffff;
-    border-radius: 12px;
+    background-color: rgba(10, 132, 255, 0.18);
+    border: 1px solid rgba(10, 132, 255, 0.35);
+    color: var(--accent-color1);
+    border-radius: 10px;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     cursor: pointer;
-    font-size: 0.65em;
-    font-weight: bold;
+    font-size: 0.6em;
+    font-weight: 700;
+    transition: opacity 0.15s ease;
 }
 
-.viewLapsBtn i {
-    font-size: 0.9em;
-}
+.viewLapsBtn:hover { opacity: 0.78; }
+.viewLapsBtn i { font-size: 0.88em; }
 
 #lapCountBadge {
-    background-color: #ffffff;
-    color: var(--accent-color1);
+    background-color: rgba(10, 132, 255, 0.3);
     border-radius: 8px;
     padding: 1px 5px;
-    font-size: 0.95em;
-    min-width: 16px;
+    font-size: 0.9em;
+    min-width: 14px;
     text-align: center;
 }
 
-/* Lap Modal Overlay */
+/* ── Lap modal ───────────────────────────────────────── */
+
 .lapModal {
     display: none;
     position: fixed;
@@ -812,8 +1008,8 @@ main {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
     z-index: 15;
     justify-content: center;
     align-items: center;
@@ -826,254 +1022,117 @@ main {
 
 @keyframes fadeIn {
     from { opacity: 0; }
-    to { opacity: 1; }
+    to   { opacity: 1; }
 }
 
 .lapModalContent {
-    width: calc(345px - 30px);
-    max-height: calc(400px - 30px);
+    width: calc(var(--card-width) - 32px);
+    max-height: 380px;
     background-color: var(--secondary-color);
-    border-radius: 15px;
-    padding: 15px;
+    border-radius: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    animation: slideUp 0.3s ease;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    gap: 8px;
+    animation: slideUp 0.28s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--card-border);
 }
 
 @keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .lapModalHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--separator);
 }
 
 .lapModalHeader h3 {
     margin: 0;
-    font-size: 1em;
-    color: var(--primary-color);
+    font-size: 0.95em;
+    color: var(--text-color);
+    font-weight: 700;
 }
 
 .closeLapModal {
-    width: 30px;
-    height: 30px;
-    background-color: transparent;
-    color: var(--primary-color);
+    width: 28px;
+    height: 28px;
+    background-color: var(--item-bg);
+    color: var(--text-color);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.85em;
+    transition: background-color 0.15s ease;
 }
 
-.closeLapModal:hover {
-    opacity: 0.8;
-}
+.closeLapModal:hover { background-color: rgba(255, 255, 255, 0.1); }
 
 .lapTimesListWrapper {
-    width: 100%;
-    height: 320px;
+    flex: 1;
+    max-height: 300px;
     overflow-y: auto;
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    padding-right: 5px;
+    gap: 4px;
+    padding-right: 4px;
+}
+
+.lapTimesListWrapper::-webkit-scrollbar { width: 4px; }
+.lapTimesListWrapper::-webkit-scrollbar-track { background: transparent; }
+.lapTimesListWrapper::-webkit-scrollbar-thumb { background: var(--input-bg); border-radius: 4px; }
+.lapTimesListWrapper::-webkit-scrollbar-thumb:hover { background: var(--accent-color1); }
+
+.lapTimeItem {
+    width: calc(100% - 16px);
+    min-height: 36px;
+    background-color: var(--item-bg);
+    border-radius: 8px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    font-size: 0.75em;
+    animation: slideIn 0.22s ease;
+    gap: 16px;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-14px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.lapNumber {
+    font-weight: 700;
+    color: var(--text-dim);
+}
+
+.lapTime {
+    font-family: var(--font-mono);
+    font-size: 1.05em;
+    color: var(--text-color);
 }
 
 .noLapsMessage {
     width: 100%;
-    height: 100%;
+    padding: 24px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.8em;
-    opacity: 0.5;
+    font-size: 0.78em;
+    color: var(--text-dim);
     text-align: center;
 }
 
-.resetButton, .playButton, .addButton {
-    width: 30px;
-    height: 30px;
-    background-color: #2b2b2b;
-    border-radius: 50%;
-    color: #d9d9d9;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.9em;
-}
-
-.addButton {
-    width: 30px;
-    height: 30px;
-    background-color: var(--accent-color1);
-}
-
-.playButton {
-    font-size: 1em;
-    width: 35px;
-    height: 35px;
-    background-color: var(--accent-color2);
-}
-
-.stop {
-    background-color: red;
-}
-
-.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.menuWrapper {
-    width: 345px;
-    height: 70px;
-    background-color: var(--secondary-color);
-    border-radius: 15px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-
-.menuItem {
-    color: var(--primary-color);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-
-    opacity: 0.5;
-}
-.menuItem:hover {
-    cursor: pointer;
-    color: var(--primary-color);
-    opacity: 0.8;
-}
-.activeMenu {
-    opacity: 1;
-    color: var(--primary-color);
-}
-.menuItem div {
-    font-size: 0.75em;
-}
-
-.interactivePops {
-    width: 345px;
-    height: 35px;
-    border-radius:30px;
-    color:var(--primary-color);
-
-    position: absolute;
-    transform: translateY(-165px);
-
-    display: grid;
-    grid-template-columns: 1fr 8fr;
-    align-items: center;
-
-
-}
-
-.interactivePops .icon {
-    font-size:0.85em;
-    justify-self: center;
-}
-
-.interactivePops .content {
-    font-size: 0.7em;
-    font-weight: bold;
-
-}
-
-
-.moodSuccess {
-    background-color: var(--accent-color2);
-    color: var(--text-color);
-}
-
-.moodWarning {
-    background-color: rgb(123, 109, 30);
-    color: var(--text-color);
-}
-
-.moodDanger {
-    background-color: rgb(250, 64, 64);
-    color: var(--text-color);
-}
-
-.default {
-    background-color: var(--secondary-color);
-    opacity: 0.5;
-}
-
-.hide {
-    display: none;
-}
-
-.timerHours, .timerMinutes, .timerSeconds {
-    width: 75px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.2s ease, transform 0.2s ease; /* Add smooth transitions */
-}
-
-header {
-    width: calc(100% - 20px);
-    height: fit-content;
-    padding: 5px 10px;
-
-    position: absolute;
-    top: 30px;
-    left: 0;
-
-    display: flex;
-    justify-content: space-between;
-
-    z-index: 5;
-}
-
-.headerButtons {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.helpButton {
-    width: 35px;
-    height: 25px;
-    background-color: var(--secondary-color);
-    color: var(--primary-color);
-    border-radius: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    font-size: 0.9em;
-    transition: opacity 0.2s ease;
-}
-
-.helpButton:hover {
-    opacity: 0.8;
-}
+/* ── Help modal ──────────────────────────────────────── */
 
 .helpModal {
     display: none;
@@ -1082,8 +1141,8 @@ header {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(5px);
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(12px);
     z-index: 20;
     justify-content: center;
     align-items: center;
@@ -1095,112 +1154,135 @@ header {
 }
 
 .helpModalContent {
-    width: calc(345px - 40px);
-    max-width: 90%;
+    width: calc(var(--card-width) - 32px);
+    max-width: 90vw;
     max-height: 500px;
     background-color: var(--secondary-color);
-    border-radius: 15px;
-    padding: 20px;
+    border-radius: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    animation: slideUp 0.3s ease;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    gap: 16px;
+    animation: slideUp 0.28s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--card-border);
 }
 
 .helpModalHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 10px;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--separator);
 }
 
 .helpModalHeader h3 {
     margin: 0;
-    font-size: 1.2em;
-    color: var(--primary-color);
+    font-size: 1em;
+    color: var(--text-color);
+    font-weight: 700;
 }
 
 .closeHelpModal {
-    width: 30px;
-    height: 30px;
-    background-color: transparent;
-    color: var(--primary-color);
+    width: 28px;
+    height: 28px;
+    background-color: var(--item-bg);
+    color: var(--text-color);
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.85em;
+    transition: background-color 0.15s ease;
 }
+
+.closeHelpModal:hover { background-color: rgba(255, 255, 255, 0.1); }
 
 .helpModalBody {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding-right: 5px;
+    gap: 16px;
+    padding-right: 4px;
 }
 
 .shortcutGroup h4 {
-    margin: 0 0 10px 0;
-    color: var(--primary-color);
-    font-size: 0.9em;
-    opacity: 0.7;
+    margin: 0 0 8px 0;
+    color: var(--text-dim);
+    font-size: 0.72em;
     text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 .shortcut {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 8px 0;
-    color: var(--primary-color);
-    font-size: 0.85em;
+    padding: 5px 0;
+    color: var(--text-color);
+    font-size: 0.82em;
 }
 
 kbd {
-    background-color: var(--primary-color);
+    background-color: var(--input-bg);
+    border: 1px solid var(--card-border);
     color: var(--text-color);
-    padding: 4px 8px;
-    border-radius: 5px;
-    font-family: monospace;
-    font-size: 0.9em;
-    font-weight: bold;
-    min-width: 30px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.78em;
+    font-weight: 700;
+    min-width: 28px;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* ── Alarm dialog ────────────────────────────────────── */
+
 dialog#notificationDialog {
-    position: absolute;
-    top:30px;
-    margin:0px auto;
-    padding: 10px;
-
-    width:345px;
-    height: fit-content;
-    border-radius: 5px;
-
-    border:none;
-
-
-
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    padding: 12px 16px;
+    width: min(320px, calc(100vw - 32px));
+    border-radius: 14px;
+    border: 1px solid var(--card-border);
     background-color: var(--secondary-color);
-    color: var(--primary-color);
+    color: var(--text-color);
+    font-size: 0.85em;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
 
-    font-size: 0.8em;
-
-    box-shadow: 0 0px 4px rgba(100, 99, 99, 0.2);
+dialog#notificationDialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
 }
 
 .dialogMessage {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 16px;
+}
+
+.messageText {
+    font-weight: 600;
+    color: var(--text-color);
 }
 
 .closeDialog {
-    color: var(--primary-color);
+    color: var(--text-color);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--item-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color 0.15s ease;
 }
+
+.closeDialog:hover { background-color: rgba(255, 255, 255, 0.1); }

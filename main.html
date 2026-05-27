@@ -6,6 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SimplTimer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="resources/css/main.css">
 </head>
 <body>
@@ -33,6 +35,8 @@
                 Message : Hello Word !
             </span>
         </div>
+        <div class="cardStack">
+        <div class="timerBorderProgress"></div>
         <div class="cardContentWrapper">
             <div class="contentCards">
                 <div class="contentCard" id="worldClockCard" onload="displayTime()">
@@ -180,6 +184,7 @@
                 </div>
             </div>
         </div>
+        </div><!-- /cardStack -->
         <div class="menuWrapper">
             <!-- To do: move activemenu back to here -->
             <button class="menuItem activeMenu" id="worldClock" onclick="moveCards(0)">
