@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap');
+
 @font-face{
     font-family: 'Digital-7';
     src: url('../fonts/digital-7.ttf') format('truetype');
@@ -16,6 +18,9 @@ button {
     --text-color: #b9d6f2;
     --accent-color1: #0353a4;
     --accent-color2: #006daa;
+
+    /* Typography */
+    --font-body: 'Space Mono', monospace;
 }
 
 /* Light theme — same palette, inverted roles */
@@ -30,16 +35,16 @@ button {
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif;
+    font-family: var(--font-body);
     color: var(--text-color);
     position: relative;
 
     width: 100vw;
     height: 100vh;
 
-    background-color: #000;
+    background-color: var(--primary-color);
     background-image: url('../images/simplTimerWallpaper.jpeg');
-    background-size: contain;
+    background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
 
@@ -1272,7 +1277,7 @@ kbd {
     color: var(--text-color);
     padding: 4px 8px;
     border-radius: 5px;
-    font-family: monospace;
+    font-family: var(--font-body);
     font-size: 0.9em;
     font-weight: bold;
     min-width: 30px;
