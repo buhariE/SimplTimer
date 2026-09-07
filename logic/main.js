@@ -87,6 +87,14 @@ function toggleTheme() {
         themeToggleCircle.style.transform = 'translateX(0px)';
         themeToggleCircle.innerHTML = '<i class="fa-solid fa-moon"></i>';
     }
+    if (window.Globe) window.Globe.refreshColors();
+}
+
+// Push the currently displayed zones at the background globe.
+function syncGlobe() {
+    if (window.Globe) {
+        window.Globe.setZones(timeZoneFormat, extraClocks.map(c => c.tz));
+    }
 }
 
 function toggleFormat() {
@@ -531,6 +539,11 @@ document.addEventListener(
         // const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         document.querySelector('.timezoneValue').innerText = timeZoneFormat;
 
+        if (window.Globe) {
+            window.Globe.init();
+            syncGlobe();
+        }
+
         document.querySelectorAll('.digits').forEach((input)=>{
             input.addEventListener('input', function () {
                 this.value = this.value.replace(/[^0-9]/g, '');
@@ -646,6 +659,7 @@ function itemEvent(newValue){
         document.querySelector('.timezoneValue').innerText = newValue;
         timeZoneFormat = newValue;
     }
+    syncGlobe();
 }
 
 // Stopwatch Functions
@@ -1510,6 +1524,7 @@ function addClockWidget(side) {
     clock.intervalId = setInterval(() => tickExtraClock(clock), 1000);
     tickExtraClock(clock);
     updateAddBtnState();
+    syncGlobe();
 }
 
 function removeClockWidget(id) {
@@ -1521,6 +1536,7 @@ function removeClockWidget(id) {
     clock.el.addEventListener('animationend', () => clock.el.remove(), { once: true });
     extraClocks.splice(idx, 1);
     updateAddBtnState();
+    syncGlobe();
 }
 
 function openExtraClockTzPicker(id) {

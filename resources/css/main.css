@@ -43,12 +43,21 @@ body {
     height: 100vh;
 
     background-color: var(--primary-color);
-    background-image: url('../images/simplTimerWallpaper.jpeg');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
 
     transition: color 0.3s ease;
+}
+
+#globeCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Recede with the rest of the chrome in focus mode */
+[data-focus="on"] #globeCanvas {
+    opacity: 0.15;
 }
 
 [data-theme="dark"] body::before {
@@ -1656,7 +1665,8 @@ dialog#notificationDialog {
 
 .infoPopover {
     display: none;
-    min-width: 180px;
+    min-width: 210px;
+    max-width: 260px;
     border-radius: 14px;
     padding: 14px 16px;
     backdrop-filter: blur(24px) saturate(1.6);
@@ -1726,6 +1736,53 @@ dialog#notificationDialog {
 
 .infoYear i {
     color: var(--accent-color1);
+}
+
+.infoDivider {
+    height: 1px;
+    margin: 12px 0 10px;
+    background: currentColor;
+    opacity: 0.15;
+}
+
+.infoCreditsTitle {
+    font-size: 0.7em;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    margin-bottom: 8px;
+}
+
+.infoCredit {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 0.75em;
+    line-height: 1.4;
+    opacity: 0.85;
+}
+
+.infoCredit:last-child {
+    margin-bottom: 0;
+}
+
+.infoCredit i {
+    margin-top: 3px;
+    color: var(--accent-color1);
+    flex-shrink: 0;
+}
+
+.infoCredit a {
+    color: var(--accent-color2);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.infoCredit a:hover {
+    border-bottom-color: var(--accent-color2);
 }
 
 /* Blur info button in focus mode */

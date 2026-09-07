@@ -15,6 +15,7 @@ A clean, minimalistic world clock, timer, and stopwatch web app with a frosted g
 - Toggle between **12H** and **24H** formats
 - Search and select from a full timezone list
 - Add up to **3 extra clock widgets**, each with its own independent timezone
+- Selecting a timezone lights up its band on the background globe
 
 ### Timer
 
@@ -32,7 +33,10 @@ A clean, minimalistic world clock, timer, and stopwatch web app with a frosted g
 ## UI & Design
 
 - **Frosted glass morphism** on all widgets using `backdrop-filter`
-- **Globe wallpaper** background blended with a theme-aware overlay
+- **Interactive dot-matrix globe** background — picking a timezone tints every
+  dot sharing that zone's UTC offset, pulses a marker on its city, and rotates
+  the globe to bring it into view. Every clock on screen stays lit at once, the
+  main one brightest
 - **Dark / Light mode** toggle using a 5-colour blue palette (`#b9d6f2`, `#061a40`, `#0353a4`, `#006daa`, `#003559`)
 - **Focus mode** — blurs all UI except the active time display for distraction-free viewing
 - **Draggable snap grid** — drag the main widget or any extra clock to snap to a grid of positions:
@@ -66,5 +70,15 @@ A clean, minimalistic world clock, timer, and stopwatch web app with a frosted g
 - Vanilla HTML, CSS, JavaScript — no frameworks or build tools
 - [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat) for timezone-aware time rendering
 - [Font Awesome](https://fontawesome.com/) for icons
+- `<canvas>` globe rendered from coarse landmass polygons — no map library, no
+  network requests, no raster asset
 - [Digital-7](https://www.dafont.com/digital-7.font) monospace font for clock digits
-- Sound effect from [Pixabay](https://pixabay.com/)
+- [Space Mono](https://fonts.google.com/specimen/Space+Mono) for all other UI text
+- Sound effect by [Universfield](https://pixabay.com/users/universfield-28281460/)
+  from [Pixabay](https://pixabay.com/)
+
+### Accessibility & performance notes
+
+- The globe honours `prefers-reduced-motion` (no pulse, no rotation animation)
+- Rendering pauses while the tab is hidden and is capped at ~30fps otherwise
+- Timezone offsets come from `Intl`, so DST is handled and the data never goes stale
